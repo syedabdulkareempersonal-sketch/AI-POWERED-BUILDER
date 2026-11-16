@@ -91,20 +91,20 @@
     <img class="robot__poster" src="assets/img/robot-poster.webp" alt="" width="900" height="1000" fetchpriority="high">
     <p class="robot__bubble" id="robotBubble" aria-live="polite"></p>
     <div class="robot__hud robot__hud--a" aria-hidden="true"><span>AI core</span><b><i class="dot dot--live"></i>Online</b></div>
-    <div class="robot__hud robot__hud--b" aria-hidden="true"><span>Daily stack</span><b class="robot__logos"><img class="lg" src="assets/logos/claude.svg" alt=""><i class="lg lg--mono" style="-webkit-mask-image:url(assets/logos/openai.svg);mask-image:url(assets/logos/openai.svg)"></i><img class="lg" src="assets/logos/antigravity.svg" alt=""><i class="lg lg--mono" style="-webkit-mask-image:url(assets/logos/ollama.svg);mask-image:url(assets/logos/ollama.svg)"></i></b></div>
-    <p class="robot__hint" aria-hidden="true">Click the robot to say hi</p>
+    <div class="robot__hud robot__hud--b" aria-hidden="true"><span>Daily stack</span><b class="robot__logos"><img class="lg" src="assets/logos/claude.svg" alt=""><i class="lg lg--mono lg--openai"></i><img class="lg" src="assets/logos/antigravity.svg" alt=""><i class="lg lg--mono lg--ollama"></i></b></div>
+    <p class="robot__hint" aria-hidden="true"><span class="robot__hint-fine">Click</span><span class="robot__hint-touch">Tap</span> the robot to say hi</p>
     <button class="robot__say" type="button">Say hello to the robot</button>
   </div>
 </section>
 
 <!-- Marquee: what I build + the stack I build it with -->
-<section class="marquee" id="marquee" aria-label="What I build and the AI stack I use">
+<section class="marquee" id="marquee" tabindex="0" aria-label="What I build and the AI stack I use. Moving band: hover, tap or focus it to pause.">
   <p class="sr-only">I build apps, websites, AI videos and marketing, end to end with AI, using Claude Max, ChatGPT Pro, Google Antigravity Pro and open-source models run locally.</p>
   <div class="marquee__row marquee__row--words" data-dir="-1" data-speed="46" aria-hidden="true">
     <div class="marquee__track"><span class="mw">Apps</span><span class="ms">✦</span><span class="mw mw--o">Websites</span><span class="ms">✦</span><span class="mw">AI Videos</span><span class="ms">✦</span><span class="mw mw--o">Marketing</span><span class="ms">✦</span><span class="mw">Built end to end with AI</span><span class="ms">✦</span></div>
   </div>
   <div class="marquee__row marquee__row--logos" data-dir="1" data-speed="34" aria-hidden="true">
-    <div class="marquee__track"><span class="pill"><img class="lg" src="assets/logos/claude.svg" alt="" width="22" height="22">Claude Max</span><span class="pill"><i class="lg lg--mono" style="-webkit-mask-image:url(assets/logos/openai.svg);mask-image:url(assets/logos/openai.svg)"></i>ChatGPT Pro</span><span class="pill"><img class="lg" src="assets/logos/antigravity.svg" alt="" width="22" height="22">Google Antigravity Pro</span><span class="pill"><i class="lg lg--mono" style="-webkit-mask-image:url(assets/logos/ollama.svg);mask-image:url(assets/logos/ollama.svg)"></i>Ollama</span><span class="pill"><img class="lg" src="assets/logos/meta.svg" alt="" width="22" height="22">Llama</span><span class="pill"><img class="lg" src="assets/logos/mistral.svg" alt="" width="22" height="22">Mistral</span><span class="pill"><img class="lg" src="assets/logos/deepseek.svg" alt="" width="22" height="22">DeepSeek</span><span class="pill"><img class="lg" src="assets/logos/qwen.svg" alt="" width="22" height="22">Qwen</span><span class="pill"><img class="lg" src="assets/logos/huggingface.svg" alt="" width="22" height="22">Hugging Face</span><span class="pill"><i class="lg lg--mono" style="--c:#61DAFB;--cl:#0a86b5;-webkit-mask-image:url(assets/logos/react.svg);mask-image:url(assets/logos/react.svg)"></i>React</span><span class="pill"><i class="lg lg--mono" style="--c:#FFCA28;--cl:#e69500;-webkit-mask-image:url(assets/logos/firebase.svg);mask-image:url(assets/logos/firebase.svg)"></i>Firebase</span><span class="pill"><i class="lg lg--mono" style="--c:#F7DF1E;--cl:#c9a700;-webkit-mask-image:url(assets/logos/javascript.svg);mask-image:url(assets/logos/javascript.svg)"></i>JavaScript</span></div>
+    <div class="marquee__track"><span class="pill"><img class="lg" src="assets/logos/claude.svg" alt="" width="22" height="22">Claude Max</span><span class="pill"><i class="lg lg--mono lg--openai"></i>ChatGPT Pro</span><span class="pill"><img class="lg" src="assets/logos/antigravity.svg" alt="" width="22" height="22">Google Antigravity Pro</span><span class="pill"><i class="lg lg--mono lg--ollama"></i>Ollama</span><span class="pill"><img class="lg" src="assets/logos/meta.svg" alt="" width="22" height="22">Llama</span><span class="pill"><img class="lg" src="assets/logos/mistral.svg" alt="" width="22" height="22">Mistral</span><span class="pill"><img class="lg" src="assets/logos/deepseek.svg" alt="" width="22" height="22">DeepSeek</span><span class="pill"><img class="lg" src="assets/logos/qwen.svg" alt="" width="22" height="22">Qwen</span><span class="pill"><img class="lg" src="assets/logos/huggingface.svg" alt="" width="22" height="22">Hugging Face</span><span class="pill"><i class="lg lg--mono lg--react" style="--c:#61DAFB;--cl:#0a86b5"></i>React</span><span class="pill"><i class="lg lg--mono lg--firebase" style="--c:#FFCA28;--cl:#e69500"></i>Firebase</span><span class="pill"><i class="lg lg--mono lg--javascript" style="--c:#F7DF1E;--cl:#c9a700"></i>JavaScript</span></div>
   </div>
 </section>
 
@@ -259,7 +259,7 @@
       <h3>Claude Max</h3><p>Daily use</p>
     </article>
     <article class="ai reveal" style="--c:#10a37f">
-      <div class="ai__logo"><i class="lg lg--mono" style="-webkit-mask-image:url(assets/logos/openai.svg);mask-image:url(assets/logos/openai.svg)"></i></div>
+      <div class="ai__logo"><i class="lg lg--mono lg--openai"></i></div>
       <h3>ChatGPT Pro</h3><p>Daily use</p>
     </article>
     <article class="ai reveal" style="--c:#4c8df6">
@@ -267,7 +267,7 @@
       <h3>Google Antigravity Pro</h3><p>Daily use</p>
     </article>
     <article class="ai ai--oss reveal" style="--c:#b48cff">
-      <div class="ai__stack" aria-hidden="true"><span title="Ollama"><i class="lg lg--mono" style="-webkit-mask-image:url(assets/logos/ollama.svg);mask-image:url(assets/logos/ollama.svg)"></i></span><span title="Llama"><img class="lg" src="assets/logos/meta.svg" alt="" width="22" height="22"></span><span title="Mistral"><img class="lg" src="assets/logos/mistral.svg" alt="" width="22" height="22"></span><span title="DeepSeek"><img class="lg" src="assets/logos/deepseek.svg" alt="" width="22" height="22"></span><span title="Qwen"><img class="lg" src="assets/logos/qwen.svg" alt="" width="22" height="22"></span><span title="Hugging Face"><img class="lg" src="assets/logos/huggingface.svg" alt="" width="22" height="22"></span></div>
+      <div class="ai__stack" aria-hidden="true"><span title="Ollama"><i class="lg lg--mono lg--ollama"></i></span><span title="Llama"><img class="lg" src="assets/logos/meta.svg" alt="" width="22" height="22"></span><span title="Mistral"><img class="lg" src="assets/logos/mistral.svg" alt="" width="22" height="22"></span><span title="DeepSeek"><img class="lg" src="assets/logos/deepseek.svg" alt="" width="22" height="22"></span><span title="Qwen"><img class="lg" src="assets/logos/qwen.svg" alt="" width="22" height="22"></span><span title="Hugging Face"><img class="lg" src="assets/logos/huggingface.svg" alt="" width="22" height="22"></span></div>
       <h3>Open-source models</h3><p>Run locally</p>
     </article>
   </div>
@@ -278,11 +278,11 @@
     </div>
     <div class="kit__group reveal" style="--n:5">
       <h3>Tech used</h3>
-      <ul class="tiles"><li class="tile" style="--c:#E34F26"><span class="tile__logo"><i class="lg lg--mono" style="--c:#E34F26;-webkit-mask-image:url(assets/logos/html5.svg);mask-image:url(assets/logos/html5.svg)"></i></span><span class="tile__name">HTML</span></li><li class="tile" style="--c:#8b5cf6"><span class="tile__logo"><i class="lg lg--mono" style="--c:#8b5cf6;--cl:#663399;-webkit-mask-image:url(assets/logos/css.svg);mask-image:url(assets/logos/css.svg)"></i></span><span class="tile__name">CSS</span></li><li class="tile" style="--c:#F7DF1E"><span class="tile__logo"><i class="lg lg--mono" style="--c:#F7DF1E;--cl:#c9a700;-webkit-mask-image:url(assets/logos/javascript.svg);mask-image:url(assets/logos/javascript.svg)"></i></span><span class="tile__name">JavaScript</span></li><li class="tile" style="--c:#61DAFB"><span class="tile__logo"><i class="lg lg--mono" style="--c:#61DAFB;--cl:#0a86b5;-webkit-mask-image:url(assets/logos/react.svg);mask-image:url(assets/logos/react.svg)"></i></span><span class="tile__name">React</span></li><li class="tile" style="--c:#FFCA28"><span class="tile__logo"><i class="lg lg--mono" style="--c:#FFCA28;--cl:#e69500;-webkit-mask-image:url(assets/logos/firebase.svg);mask-image:url(assets/logos/firebase.svg)"></i></span><span class="tile__name">Firebase</span></li></ul>
+      <ul class="tiles"><li class="tile" style="--c:#E34F26"><span class="tile__logo"><i class="lg lg--mono lg--html5" style="--c:#E34F26"></i></span><span class="tile__name">HTML</span></li><li class="tile" style="--c:#8b5cf6"><span class="tile__logo"><i class="lg lg--mono lg--css" style="--c:#8b5cf6;--cl:#663399"></i></span><span class="tile__name">CSS</span></li><li class="tile" style="--c:#F7DF1E"><span class="tile__logo"><i class="lg lg--mono lg--javascript" style="--c:#F7DF1E;--cl:#c9a700"></i></span><span class="tile__name">JavaScript</span></li><li class="tile" style="--c:#61DAFB"><span class="tile__logo"><i class="lg lg--mono lg--react" style="--c:#61DAFB;--cl:#0a86b5"></i></span><span class="tile__name">React</span></li><li class="tile" style="--c:#FFCA28"><span class="tile__logo"><i class="lg lg--mono lg--firebase" style="--c:#FFCA28;--cl:#e69500"></i></span><span class="tile__name">Firebase</span></li></ul>
     </div>
     <div class="kit__group reveal" style="--n:2">
       <h3>Design &amp; CMS</h3>
-      <ul class="tiles"><li class="tile" style="--c:#00c4cc"><span class="tile__logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5C21 6.4 17 3 12 3Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="11.5" r="1.3" fill="currentColor"/><circle cx="10" cy="7.5" r="1.3" fill="currentColor"/><circle cx="14.5" cy="7.5" r="1.3" fill="currentColor"/><circle cx="17" cy="11" r="1.3" fill="currentColor"/></svg></span><span class="tile__name">Canva</span></li><li class="tile" style="--c:#3d9bd1"><span class="tile__logo"><i class="lg lg--mono" style="--c:#3d9bd1;--cl:#21759B;-webkit-mask-image:url(assets/logos/wordpress.svg);mask-image:url(assets/logos/wordpress.svg)"></i></span><span class="tile__name">WordPress</span></li></ul>
+      <ul class="tiles"><li class="tile" style="--c:#00c4cc"><span class="tile__logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5C21 6.4 17 3 12 3Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="11.5" r="1.3" fill="currentColor"/><circle cx="10" cy="7.5" r="1.3" fill="currentColor"/><circle cx="14.5" cy="7.5" r="1.3" fill="currentColor"/><circle cx="17" cy="11" r="1.3" fill="currentColor"/></svg></span><span class="tile__name">Canva</span></li><li class="tile" style="--c:#3d9bd1"><span class="tile__logo"><i class="lg lg--mono lg--wordpress" style="--c:#3d9bd1;--cl:#21759B"></i></span><span class="tile__name">WordPress</span></li></ul>
     </div>
   </div>
 </section>
@@ -364,7 +364,7 @@
 <!-- Case study dialog -->
 <dialog class="case" id="case" aria-labelledby="caseName">
   <div class="case__panel">
-    <button class="case__close" type="button" id="caseClose" aria-label="Close case study">✕</button>
+    <button class="case__close" type="button" id="caseClose" aria-label="Close case study" autofocus>✕</button>
     <div class="case__top">
       <div class="case__plate" id="casePlate"><img id="caseImg" alt=""></div>
       <div>

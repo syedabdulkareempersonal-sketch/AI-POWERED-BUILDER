@@ -391,9 +391,9 @@ function init() {
     renderer.setSize(S.w, S.h, false);
     camera.aspect = S.w / S.h;
     const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    const dist = Math.max(1.82 / t, 1.6 / (t * camera.aspect));
+    const dist = Math.max(2.05 / t, 1.62 / (t * camera.aspect));
     camera.position.set(0, .2, dist);
-    camera.lookAt(0, -.12, 0);
+    camera.lookAt(0, -.05, 0);
     camera.updateProjectionMatrix();
     if (S.started && !S.running) requestRender();
   }
@@ -536,17 +536,18 @@ function init() {
   }
   function placeOverlays() {
     if (S.w >= 560) {
-      core.getWorldPosition(tmpV); setTop(hudCore, 'core', toStage(tmpV).y);
-      headPivot.getWorldPosition(tmpV); tmpV.y += .38; setTop(hudStack, 'stack', toStage(tmpV).y);
+      core.getWorldPosition(tmpV); tmpV.y -= .35; setTop(hudCore, 'core', toStage(tmpV).y);   // beside the torso, below the shoulder pad
+      headPivot.getWorldPosition(tmpV); tmpV.y += .85; setTop(hudStack, 'stack', toStage(tmpV).y); // beside the upper head, above the rings
     }
     if (bubble && bubble.classList.contains('is-show')) {
-      headPivot.getWorldPosition(tmpV); tmpV.y += 1.08;
-      const top = toStage(tmpV);
+      headPivot.getWorldPosition(tmpV); tmpV.y += 1.2;
+      const crown = toStage(tmpV);
       headPivot.getWorldPosition(tmpV); tmpV.x += .55; tmpV.y += .55;
       const side = toStage(tmpV);
       const bw = bubble.offsetWidth, bh = bubble.offsetHeight;
       const bx = Math.round(Math.min(Math.max(side.x - 6, 8), S.w - bw - 8));
-      const by = Math.round(Math.max(top.y - bh * .55, 4));
+      const minTop = -Math.max(0, (S.rect ? S.rect.top : 0) - 76); // may rise into the hero padding, never under the nav
+      const by = Math.round(Math.max(crown.y - bh - 10, minTop));
       if (bx !== last.bx || by !== last.by) { bubble.style.left = bx + 'px'; bubble.style.right = 'auto'; bubble.style.top = by + 'px'; last.bx = bx; last.by = by; }
     }
   }
@@ -579,7 +580,7 @@ function init() {
       const depth = Math.max(S.rect.height * .7, 320); // how far "out of the screen" the viewer sits
       S.lookTarget.set(
         THREE.MathUtils.clamp(Math.atan2(S.pointer.x - hx, depth), -.9, .9),
-        THREE.MathUtils.clamp(Math.atan2(S.pointer.y - hy, depth), -.5, .55),
+        THREE.MathUtils.clamp(Math.atan2(S.pointer.y - hy, depth), -.5, .4),
       );
     } else {
       S.lookTarget.set(Math.sin(t * .45) * .4, Math.sin(t * .31) * .12);

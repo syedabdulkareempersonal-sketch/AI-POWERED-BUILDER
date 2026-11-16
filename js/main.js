@@ -83,6 +83,7 @@
   function openCase(i) {
     current = i; fillCase();
     if (typeof caseDlg.showModal === 'function') caseDlg.showModal(); else caseDlg.setAttribute('open', '');
+    $('#caseClose').focus({ preventScroll: true });
   }
   const step = (d) => { current = (current + d + PROJECTS.length) % PROJECTS.length; fillCase(); };
   let lastCard = null;
@@ -136,12 +137,16 @@
     clearTimeout(root._themeT);
     root._themeT = setTimeout(() => root.classList.remove('theme-anim'), 550);
     root.dataset.theme = next;
+    $('#themeToggle').setAttribute('aria-pressed', String(next === 'light'));
     $('meta[name="theme-color"]').content = next === 'light' ? '#f6f2e9' : '#09090a';
     try { localStorage.setItem('theme', next); } catch (e) { /* storage unavailable */ }
   });
 
+  $('#themeToggle').setAttribute('aria-pressed', String(root.dataset.theme === 'light'));
+  $('#themeToggle').setAttribute('aria-label', 'Light theme');
+
   /* ---------- Mobile menu ---------- */
-  const burger = $('#burger'), navLinks = $('#navLinks');
+  const burger = $('#burger'), navLinks = $('#navLinks'), nav = $('#nav');
   const setMenu = (open) => {
     navLinks.classList.toggle('is-open', open);
     burger.setAttribute('aria-expanded', open);
@@ -161,19 +166,19 @@
     if (e.key === 'Escape' && navLinks.classList.contains('is-open')) { setMenu(false); burger.focus(); }
   });
   document.addEventListener('pointerdown', (e) => {
-    if (navLinks.classList.contains('is-open') && !e.target.closest('#nav')) setMenu(false);
+    if (navLinks.classList.contains('is-open') && !e.target.closest('#nav')) { setMenu(false); burger.blur(); }
   });
   addEventListener('scroll', () => {
-    if (navLinks.classList.contains('is-open') && Math.abs(scrollY - menuY) > 60) setMenu(false);
+    if (navLinks.classList.contains('is-open') && Math.abs(scrollY - menuY) > 60) { setMenu(false); burger.blur(); }
   }, { passive: true });
 
   /* ---------- Scroll progress + hide nav on scroll down ---------- */
-  const progress = $('#progressBar'), nav = $('#nav');
+  const progress = $('#progressBar');
   let lastY = scrollY, ticking = false;
   const onScroll = () => {
     const y = scrollY, max = root.scrollHeight - innerHeight;
     progress.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
-    if (!navLinks.classList.contains('is-open') && !nav.contains(document.activeElement)) {
+    if (!navLinks.classList.contains('is-open') && !nav.querySelector(':focus-visible')) {
       if (y > 600 && y > lastY + 6) nav.classList.add('is-hidden');
       else if (y < lastY - 6 || y < 600) nav.classList.remove('is-hidden');
     }
@@ -228,16 +233,23 @@
   if (marquee) {
     const rows = $$('.marquee__row', marquee).map((row) => {
       const track = $('.marquee__track', row);
-      const unit = track.innerHTML;
-      // repeat until one copy is wider than the screen, then double it so it can loop seamlessly
-      let copies = 1;
-      while (track.scrollWidth * copies < innerWidth * 1.2 && copies < 12) copies++;
-      track.innerHTML = unit.repeat(copies * 2);
-      return { track, dir: +row.dataset.dir || -1, speed: +row.dataset.speed || 40, x: 0, half: track.scrollWidth / 2 };
+      return { track, unit: track.innerHTML, dir: +row.dataset.dir || -1, speed: +row.dataset.speed || 40, x: 0, half: 0, built: 0 };
     });
-    const measure = () => rows.forEach((r) => { r.half = r.track.scrollWidth / 2; });
-    addEventListener('resize', measure);
-    if (document.fonts) document.fonts.ready.then(measure);
+    // fill: one copy must be wider than the screen, then the copy is doubled so it loops seamlessly
+    const build = () => rows.forEach((r) => {
+      if (r.built >= innerWidth) { r.half = r.track.scrollWidth / 2; return; }
+      r.track.innerHTML = r.unit;
+      const one = r.track.scrollWidth || 1;
+      const copies = Math.min(12, Math.ceil((innerWidth * 1.15) / one));
+      r.track.innerHTML = r.unit.repeat(copies * 2);
+      r.half = r.track.scrollWidth / 2;
+      r.built = innerWidth;
+      if (!r.x) r.x = -Math.min(120, r.half * .04); // first item starts clear of the edge fade
+    });
+    build();
+    let rebuildT = 0;
+    addEventListener('resize', () => { clearTimeout(rebuildT); rebuildT = setTimeout(build, 150); });
+    if (document.fonts) document.fonts.ready.then(() => rows.forEach((r) => { r.half = r.track.scrollWidth / 2; }));
 
     if (!reduced) {
       let visible = false, hover = false, last = performance.now(), lastY = scrollY, boost = 0, scrollDir = 1;
@@ -247,7 +259,7 @@
         const dy = scrollY - lastY; lastY = scrollY;
         if (Math.abs(dy) > .5) scrollDir = dy > 0 ? 1 : -1;
         boost += (Math.min(Math.abs(dy) * 1.6, 60) - boost) * .12; // eased scroll velocity
-        const pace = hover ? 0 : 1;
+        const pace = hover || focusPause ? 0 : 1;
         rows.forEach((r) => {
           r.x += r.dir * scrollDir * (r.speed * pace + boost * 22) * dt;
           if (r.x <= -r.half) r.x += r.half;
@@ -261,6 +273,9 @@
         const was = visible; visible = en.isIntersecting;
         if (visible && !was) { last = performance.now(); lastY = scrollY; requestAnimationFrame(run); }
       }).observe(marquee);
+      let focusPause = false;
+      marquee.addEventListener('focusin', () => { focusPause = true; });
+      marquee.addEventListener('focusout', () => { focusPause = false; });
       if (finePointer) {
         marquee.addEventListener('pointerenter', () => { hover = true; });
         marquee.addEventListener('pointerleave', () => { hover = false; });
@@ -387,7 +402,7 @@
 
   /* ---------- Robot safety net: if the 3D view never comes alive, keep the still image ---------- */
   const robotStage = $('#robotStage');
-  setTimeout(() => { if (robotStage && !robotStage.classList.contains('is-live')) robotStage.classList.add('is-fallback'); }, 9000);
+  setTimeout(() => { if (robotStage && !robotStage.classList.contains('is-live')) { robotStage.classList.add('is-fallback'); robotStage.setAttribute('aria-label', 'AI robot illustration'); } }, 9000);
 
   root.classList.add('js-ready'); // everything above ran: cancel the CSS failsafes
 })();
