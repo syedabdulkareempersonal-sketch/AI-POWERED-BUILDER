@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Syed Abdul Kareem — AI Builder</title>
+<meta name="description" content="Syed Abdul Kareem is an AI Builder from Kadapa, India. Apps, websites, videos and marketing, built end to end with AI. 4 years of hands-on AI experience.">
+<meta name="theme-color" content="#0b0b0a">
+<meta property="og:title" content="Syed Abdul Kareem — AI Builder">
+<meta property="og:description" content="I build real products with AI. Apps, websites, videos and marketing, built end to end.">
+<meta property="og:image" content="assets/img/abdul-wide.webp">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0b0a'/%3E%3Ctext x='32' y='44' font-family='Arial Black,Arial' font-weight='900' font-size='30' text-anchor='middle' fill='%23d4af37'%3ESK%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/bebas-neue.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/outfit.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/styles.css">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  document.documentElement.classList.add('js');
+</script>
+</head>
+<body>
+
+<!-- Preloader -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader__inner">
+    <p class="preloader__name">Syed Abdul Kareem</p>
+    <p class="preloader__role">AI Builder</p>
+    <div class="preloader__bar"><span id="preloaderBar"></span></div>
+    <p class="preloader__pct"><span id="preloaderPct">0</span>% complete</p>
+  </div>
+</div>
+
+<canvas id="fx" class="fx" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+<div class="rail" aria-hidden="true"><span id="railThumb"></span></div>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- Navigation -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="#top">Syed Abdul Kareem</a>
+  <nav class="nav__links" id="navLinks" aria-label="Primary">
+    <a href="#about">About</a>
+    <a href="#journey">Journey</a>
+    <a href="#work">Work</a>
+    <a href="#services">Services</a>
+    <a href="#reel">Reel</a>
+    <a href="#process">Process</a>
+    <a href="#toolkit">Toolkit</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <button class="nav__theme" id="themeToggle" type="button" aria-label="Switch colour theme">
+    <svg class="i-moon" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M20.4 14.6A8.5 8.5 0 0 1 9.4 3.6a.75.75 0 0 0-.96-.93A10 10 0 1 0 21.33 15.56a.75.75 0 0 0-.93-.96Z"/></svg>
+    <svg class="i-sun" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M5.3 18.7l1.5-1.5M17.2 6.8l1.5-1.5"/></g></svg>
+  </button>
+  <button class="nav__burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span></button>
+</header>
+
+<main id="main">
+
+<!-- Hero -->
+<section class="hero" id="top">
+  <div class="hero__copy">
+    <p class="eyebrow hero__eyebrow"><span class="dot"></span>AI Builder &nbsp;·&nbsp; Available for work</p>
+    <h1 class="hero__name" aria-label="Syed Abdul Kareem">
+      <span class="hero__line"><span class="hero__fill">Syed Abdul</span></span>
+      <span class="hero__line"><span class="hero__outline">Kareem</span></span>
+    </h1>
+    <p class="hero__lead">I build real products with AI.<br><em>4 years of hands-on AI experience.</em></p>
+    <div class="hero__cta">
+      <a class="btn btn--solid" href="#work"><span>View my work</span></a>
+      <a class="btn" href="#contact"><span>Get in touch</span></a>
+    </div>
+    <p class="hero__loc">
+      <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.1 6.2 12.3 6.5 12.6a.7.7 0 0 0 1 0C12.8 21.3 19 14.1 19 9a7 7 0 0 0-7-7Zm0 9.6A2.6 2.6 0 1 1 12 6.4a2.6 2.6 0 0 1 0 5.2Z"/></svg>
+      Kadapa, Andhra Pradesh, India
+    </p>
+  </div>
+
+  <div class="hero__visual" id="heroVisual">
+    <div class="hero__halo"></div>
+    <div class="hero__orbit hero__orbit--a"><i></i></div>
+    <div class="hero__orbit hero__orbit--b"><i></i></div>
+    <div class="hero__arch" data-depth="14">
+      <img src="assets/img/abdul-arch.webp" alt="Syed Abdul Kareem, AI Builder, seated at his desk" width="760" height="1027" fetchpriority="high">
+    </div>
+    <div class="hero__chip hero__chip--a" data-depth="34">
+      <strong>8,000+</strong><span>hours with AI (est.)</span>
+    </div>
+    <div class="hero__chip hero__chip--b" data-depth="-26">
+      <strong>4</strong><span>products shipped</span>
+    </div>
+  </div>
+
+  <a class="hero__scroll" href="#about" aria-label="Scroll to about"><span></span>Scroll</a>
+</section>
+
+<!-- Marquee -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track" id="marquee">
+    <span>Apps</span><i></i><span>Websites</span><i></i><span>AI Videos</span><i></i><span>Marketing</span><i></i><span>Built end to end with AI</span><i></i>
+  </div>
+</div>
+
+<!-- About -->
+<section class="section about" id="about">
+  <div class="about__photo reveal">
+    <div class="about__frame">
+      <img src="assets/img/abdul-portrait.webp" alt="Portrait of Syed Abdul Kareem" width="771" height="941" loading="lazy">
+    </div>
+    <p class="about__cap">Syed Abdul Kareem · Kadapa, India</p>
+  </div>
+  <div class="about__text">
+    <p class="eyebrow reveal">About</p>
+    <h2 class="title reveal">The<br>AI Builder</h2>
+    <blockquote class="quote reveal">“I build real products with AI. Not demos, not experiments. Things people can actually use.”</blockquote>
+    <p class="body reveal">I’m <b>Syed Abdul Kareem</b>, an <mark>AI Builder</mark> from Kadapa, Andhra Pradesh. Apps, websites, videos and marketing, built end to end with AI.</p>
+    <p class="body reveal">I have used these tools for hours every day since <mark>ChatGPT opened to the public in 2022</mark>. That is about 6 hours a day across Claude, ChatGPT, Antigravity and open-source models I run locally.</p>
+    <div class="stats">
+      <div class="stat reveal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <strong><span data-count="8000" data-format="comma">8,000</span>+</strong>
+        <span>Hours of hands-on AI use (est.)</span>
+      </div>
+      <div class="stat reveal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14v14H5zM5 9.5h14M9 3.5v4M15 3.5v4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <strong><span data-count="2022">2022</span></strong>
+        <span>Using AI daily since</span>
+      </div>
+      <div class="stat reveal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.2 5.3 5.8.5-4.4 3.8 1.3 5.6L12 15.7l-4.9 3 1.3-5.6L4 9.3l5.8-.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <strong><span data-count="4">4</span></strong>
+        <span>Products shipped</span>
+      </div>
+      <div class="stat reveal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l9-11h-6.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <strong><span data-count="4">4</span></strong>
+        <span>AI platforms in daily use</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Journey -->
+<section class="section journey" id="journey">
+  <p class="eyebrow reveal">2022 → 2026</p>
+  <h2 class="title reveal">The AI<br><span class="title__outline">Journey</span></h2>
+  <p class="lede reveal">4 years of hands-on AI experience.</p>
+  <ol class="timeline">
+    <li class="tcard reveal">
+      <p class="tcard__when"><span class="dot"></span>2022</p>
+      <h3>Day one</h3>
+      <p>Started using AI daily, from when ChatGPT opened to the public.</p>
+    </li>
+    <li class="tcard reveal">
+      <p class="tcard__when"><span class="dot"></span>2022 – 2026</p>
+      <h3>About 6 hours a day</h3>
+      <p>Across Claude, ChatGPT, Antigravity and open-source models run locally. About 8,000+ hours (est.).</p>
+      <ul class="chips"><li>Claude</li><li>ChatGPT</li><li>Antigravity</li><li>Local models</li></ul>
+    </li>
+    <li class="tcard reveal">
+      <p class="tcard__when"><span class="dot dot--live"></span>Now</p>
+      <h3>Four products shipped</h3>
+      <p>Shipped Kadapa Cars, CricApex, HOOR-E-AIN and WaqtOS with AI.</p>
+      <ul class="chips"><li>Kadapa Cars</li><li>CricApex</li><li>HOOR-E-AIN</li><li>WaqtOS</li></ul>
+    </li>
+  </ol>
+</section>
+
+<!-- Work -->
+<section class="section work" id="work">
+  <p class="eyebrow reveal">Selected work</p>
+  <h2 class="title reveal">What I<br>Shipped</h2>
+
+  <div class="showcase reveal" id="showcase" aria-roledescription="carousel" aria-label="Shipped projects">
+    <div class="showcase__media">
+      <div class="deck" id="deck"></div>
+      <div class="showcase__nav">
+        <button type="button" id="prevProject" aria-label="Previous project"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <p><b id="projectIndex">01</b> / <span id="projectTotal">04</span></p>
+        <button type="button" id="nextProject" aria-label="Next project"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M9.5 5.5L16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+    <div class="showcase__info" id="projectInfo" aria-live="polite">
+      <p class="showcase__kind" id="projectKind"></p>
+      <h3 class="showcase__name" id="projectName"></h3>
+      <p class="showcase__sub" id="projectSub"></p>
+      <p class="showcase__desc" id="projectDesc"></p>
+      <ul class="chips" id="projectTags"></ul>
+      <div class="showcase__foot">
+        <p class="showcase__metric"><strong id="projectMetric"></strong><span id="projectMetricLabel"></span></p>
+        <button class="btn btn--sm" type="button" id="openCase"><span>↗ Full case study</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section class="section services" id="services">
+  <p class="eyebrow reveal">Services</p>
+  <h2 class="title reveal">What I Can<br>Build For You</h2>
+  <div class="cards">
+    <article class="card reveal">
+      <p class="card__num">01</p>
+      <h3>AI App Development</h3>
+      <p>Web and mobile apps built from idea to working product with AI.</p>
+      <span class="card__line"></span>
+    </article>
+    <article class="card reveal">
+      <p class="card__num">02</p>
+      <h3>AI Websites &amp; Landing Pages</h3>
+      <p>Clean, fast, responsive websites designed and built end to end with AI.</p>
+      <span class="card__line"></span>
+    </article>
+    <article class="card reveal">
+      <p class="card__num">03</p>
+      <h3>AI Video Production</h3>
+      <p>Short-form AI videos and visual reels produced with generative AI tools.</p>
+      <span class="card__line"></span>
+    </article>
+    <article class="card reveal">
+      <p class="card__num">04</p>
+      <h3>AI Marketing &amp; Brand Content</h3>
+      <p>Brand visuals, creative assets and product content built with AI.</p>
+      <span class="card__line"></span>
+    </article>
+  </div>
+</section>
+
+<!-- Reel -->
+<section class="section reel" id="reel">
+  <div class="reel__text">
+    <p class="eyebrow reveal">AI video · Demo reel</p>
+    <h2 class="title reveal">Visual<br>Craft</h2>
+    <p class="lede reveal">Short-form AI video, produced with <em>generative AI tools</em> from the first prompt to the final cut.</p>
+    <p class="body reveal">Press play. It runs right here on the page.</p>
+  </div>
+  <div class="reel__stage reveal">
+    <div class="phone phone--side phone--l" aria-hidden="true"><b>01</b><span>First prompt</span></div>
+    <div class="phone phone--main" id="reelPlayer" data-embed="https://www.youtube-nocookie.com/embed/nXBdBgQvUWE">
+      <img class="phone__poster" src="https://i.ytimg.com/vi/nXBdBgQvUWE/oar2.jpg" alt="" loading="lazy" onerror="this.onerror=null;this.src='assets/img/abdul-arch.webp'">
+      <button class="phone__play" type="button" id="reelPlay" aria-label="Play the AI video reel">
+        <span><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a.8.8 0 0 0 1.2.7l10.5-6.5a.8.8 0 0 0 0-1.4L9.2 4.8A.8.8 0 0 0 8 5.5Z"/></svg></span>
+        <em>Play reel</em>
+      </button>
+    </div>
+    <div class="phone phone--side phone--r" aria-hidden="true"><b>02</b><span>Final cut</span></div>
+  </div>
+</section>
+
+<!-- Process -->
+<section class="section process" id="process">
+  <p class="eyebrow reveal">Process</p>
+  <h2 class="title reveal">How I<br><span class="title__outline">Build</span></h2>
+  <ol class="steps">
+    <li class="step reveal">
+      <p class="step__num">01</p>
+      <div>
+        <h3>Brief it clearly</h3>
+        <p>Start with the real problem, the user flow, and the exact outcome needed before generating a single screen or line of code.</p>
+      </div>
+    </li>
+    <li class="step reveal">
+      <p class="step__num">02</p>
+      <div>
+        <h3>Build it with AI</h3>
+        <p>Combine Claude Max, ChatGPT Pro, Google Antigravity Pro, and local models with modern web tools to build the working product step by step.</p>
+      </div>
+    </li>
+    <li class="step reveal">
+      <p class="step__num">03</p>
+      <div>
+        <h3>Ship and refine</h3>
+        <p>Test on real devices, tighten every interaction, polish the copy and visuals, and ship a reliable product that people can actually use.</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- Toolkit -->
+<section class="section toolkit" id="toolkit">
+  <div class="toolkit__head">
+    <p class="eyebrow reveal">Toolkit</p>
+    <h2 class="title reveal">What I<br>Wield</h2>
+    <p class="body reveal">Four AI platforms in daily use, paired with modern web tools, to take an idea all the way to a working product.</p>
+  </div>
+  <div class="toolkit__groups">
+    <div class="tgroup reveal">
+      <h3><i></i>AI platforms · Daily use</h3>
+      <ul class="tools">
+        <li><b style="--c:#d97757"></b>Claude Max</li>
+        <li><b style="--c:#19c37d"></b>ChatGPT Pro</li>
+        <li><b style="--c:#4c8df6"></b>Google Antigravity Pro</li>
+        <li><b style="--c:#b48cff"></b>Open-source models (run locally)</li>
+      </ul>
+    </div>
+    <div class="tgroup reveal">
+      <h3><i></i>What I build with AI</h3>
+      <ul class="tools">
+        <li><b style="--c:#e8c547"></b>Apps</li>
+        <li><b style="--c:#e8c547"></b>Websites</li>
+        <li><b style="--c:#e8c547"></b>Videos</li>
+        <li><b style="--c:#e8c547"></b>Marketing content</li>
+      </ul>
+    </div>
+    <div class="tgroup reveal">
+      <h3><i></i>Tech used</h3>
+      <ul class="tools">
+        <li><b style="--c:#e44d26"></b>HTML</li>
+        <li><b style="--c:#2d6bdd"></b>CSS</li>
+        <li><b style="--c:#f0db4f"></b>JavaScript</li>
+        <li><b style="--c:#61dafb"></b>React</li>
+        <li><b style="--c:#ffa000"></b>Firebase</li>
+      </ul>
+    </div>
+    <div class="tgroup reveal">
+      <h3><i></i>Design &amp; CMS</h3>
+      <ul class="tools">
+        <li><b style="--c:#00c4cc"></b>Canva</li>
+        <li><b style="--c:#3858e9"></b>WordPress</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Education -->
+<section class="section edu" id="education">
+  <p class="eyebrow reveal">Education &amp; certification</p>
+  <h2 class="title reveal">The Academic<br>Journey</h2>
+  <ol class="edu__list">
+    <li class="reveal">
+      <p class="edu__when">Nov 2024 – Apr 2025</p>
+      <p class="edu__kind">Certificate</p>
+      <h3>Full Stack Digital Marketing Course</h3>
+      <p class="edu__where">WsCube Tech</p>
+      <ul>
+        <li>25 Nov 2024 – 14 Apr 2025</li>
+        <li>Grade: <b>A+</b></li>
+      </ul>
+    </li>
+    <li class="reveal">
+      <p class="edu__when">Mar 2021 – Jul 2024</p>
+      <p class="edu__kind">Undergraduate</p>
+      <h3>Bachelor of Arts (BA)</h3>
+      <p class="edu__where">Maulana Azad National Urdu University (MANUU), Hyderabad</p>
+      <ul>
+        <li>CGPA: <b>7.62</b></li>
+      </ul>
+    </li>
+  </ol>
+</section>
+
+<!-- Contact -->
+<section class="section contact" id="contact">
+  <p class="eyebrow reveal">Ready to start a project?</p>
+  <div class="contact__head reveal">
+    <span class="contact__ghost" aria-hidden="true">Connect</span>
+    <h2 class="contact__title">Let’s Build<br>Something<br>Real</h2>
+  </div>
+  <div class="links reveal">
+    <a class="link link--wide" href="mailto:syedabdulkareempersonal@gmail.com">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Zm2.3.5 6.7 5.2L18.7 7H5.3ZM19 8.6l-6.4 5a1 1 0 0 1-1.2 0L5 8.6V17h14V8.6Z"/></svg>
+      <span class="link__label">Email me</span>
+      <span class="link__value">syedabdulkareempersonal@gmail.com</span>
+    </a>
+    <a class="link link--wide" href="https://www.linkedin.com/in/syedabdulkareemofficial/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.5 3h15A1.5 1.5 0 0 1 21 4.5v15a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-15A1.5 1.5 0 0 1 4.5 3Zm3.2 15.3V10H5.1v8.3h2.6ZM6.4 8.8a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm12.5 9.5v-4.6c0-2.4-1.3-3.9-3.3-3.9-1.2 0-2 .6-2.4 1.3V10h-2.6v8.3h2.6v-4.5c0-1.1.6-1.8 1.6-1.8.9 0 1.5.7 1.5 1.8v4.5h2.6Z"/></svg>
+      <span class="link__label">LinkedIn</span>
+      <span class="link__value">/in/syedabdulkareemofficial</span>
+    </a>
+    <a class="link" href="tel:+919515624770">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.2 3.5c.5 0 .9.3 1 .8l.9 3.6a1 1 0 0 1-.3 1L7.1 10.5a12.5 12.5 0 0 0 6.4 6.4l1.6-1.7a1 1 0 0 1 1-.3l3.6.9c.5.1.8.5.8 1v3.2a1 1 0 0 1-1 1C10.9 21 3 13.1 3 4.5a1 1 0 0 1 1-1h3.2Z"/></svg>
+      <span class="link__label">Call</span>
+      <span class="link__value">+91 95156 24770</span>
+    </a>
+    <a class="link" href="#work">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M4 5.5h16v10H4zM9 19.5h6M12 15.5v4"/></svg>
+      <span class="link__label">Work</span>
+      <span class="link__value">4 products shipped</span>
+    </a>
+    <a class="link" href="#reel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a.8.8 0 0 0 1.2.7l10.5-6.5a.8.8 0 0 0 0-1.4L9.2 4.8A.8.8 0 0 0 8 5.5Z"/></svg>
+      <span class="link__label">Reel</span>
+      <span class="link__value">Watch the AI video</span>
+    </a>
+    <div class="link link--static">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.1 6.2 12.3 6.5 12.6a.7.7 0 0 0 1 0C12.8 21.3 19 14.1 19 9a7 7 0 0 0-7-7Zm0 9.6A2.6 2.6 0 1 1 12 6.4a2.6 2.6 0 0 1 0 5.2Z"/></svg>
+      <span class="link__label">Based in</span>
+      <span class="link__value">Kadapa, Andhra Pradesh, India</span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <p>© <span id="year">2026</span> Syed Abdul Kareem · AI Builder</p>
+  <p>Built end to end with AI.</p>
+  <a href="#top">Back to top ↑</a>
+</footer>
+
+<!-- Case study dialog -->
+<dialog class="case" id="case" aria-labelledby="caseName">
+  <div class="case__panel">
+    <button class="case__close" type="button" id="caseClose" aria-label="Close case study">✕</button>
+    <div class="case__tags"><span id="caseKind"></span><span class="case__status" id="caseStatus"></span></div>
+    <h3 class="case__name" id="caseName"></h3>
+    <div class="case__media" id="caseMedia">
+      <button type="button" class="case__arrow" id="casePrev" aria-label="Previous project">‹</button>
+      <img id="caseImg" src="" alt="">
+      <button type="button" class="case__arrow case__arrow--next" id="caseNext" aria-label="Next project">›</button>
+    </div>
+    <div class="case__cols">
+      <div>
+        <h4>Project overview</h4>
+        <p id="caseDesc"></p>
+      </div>
+      <div>
+        <h4>Key features</h4>
+        <ul id="caseFeatures"></ul>
+        <h4>Built with</h4>
+        <p class="case__built">AI, end to end</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script src="js/main.js" defer></script>
+</body>
+</html>
