@@ -10,12 +10,14 @@ const canvas = document.getElementById('robotCanvas');
 const bubble = document.getElementById('robotBubble');
 const root = document.documentElement;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 const hasGL = (() => {
   try {
     const c = document.createElement('canvas');
-    return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+    const gl = window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'));
+    const ext = gl && gl.getExtension('WEBGL_lose_context');
+    if (ext) ext.loseContext();
+    return !!gl;
   } catch (e) { return false; }
 })();
 
@@ -143,7 +145,7 @@ function surfacePatch(rFn, y0, y1, hw, lift, rows = 44, cols = 56) {
 /* ------------------------------------------------------------------- init */
 function init() {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -177,9 +179,12 @@ function init() {
   M.weave.bumpMap.repeat.set(26, 9);
 
   const glowTex = radialTexture();
+  const glows = [];
   const glow = (scale, opacity = .9) => {
     const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: GOLD, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false, clippingPlanes: [solidClip] }));
     s.scale.set(scale, scale, 1);
+    s.userData.baseOpacity = opacity;
+    glows.push(s);
     return s;
   };
 
@@ -371,7 +376,8 @@ function init() {
   const S = {
     w: 1, h: 1, visible: true, running: false,
     started: false, buildT: 0, built: false,
-    mouse: new THREE.Vector2(0, 0), target: new THREE.Vector2(0, 0), lastMove: -10,
+    look: new THREE.Vector2(0, 0), lookTarget: new THREE.Vector2(0, 0),
+    pointer: { x: 0, y: 0, inside: false, touchAt: -10 }, rect: null,
     nextBlink: 2.5, blinkT: -1, nextScan: 6, scanT: -1,
     greetT: -1, msg: 0, bubbleTimer: 0,
     scroll: 0, light: root.dataset.theme === 'light',
@@ -379,7 +385,9 @@ function init() {
 
   function fit() {
     const r = stage.getBoundingClientRect();
+    S.rect = r;
     S.w = Math.max(1, r.width); S.h = Math.max(1, r.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.setSize(S.w, S.h, false);
     camera.aspect = S.w / S.h;
     const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
@@ -387,6 +395,7 @@ function init() {
     camera.position.set(0, .2, dist);
     camera.lookAt(0, -.12, 0);
     camera.updateProjectionMatrix();
+    if (S.started && !S.running) requestRender();
   }
   fit();
   new ResizeObserver(fit).observe(stage);
@@ -396,19 +405,32 @@ function init() {
     const blend = S.light ? THREE.NormalBlending : THREE.AdditiveBlending;
     pMat.blending = blend; pMat.color.set(S.light ? 0x9a7414 : GOLD); pMat.opacity = S.light ? .5 : .75; pMat.needsUpdate = true;
     rings.forEach((r) => { r.ringMat.color.set(S.light ? 0x8a6a12 : GOLD); r.ringMat.opacity = S.light ? .55 : .42; });
+    wireMat.color.set(S.light ? 0x6b4f0a : GOLD);
+    glows.forEach((g) => { g.material.blending = blend; g.material.color.set(S.light ? 0xb8891e : GOLD); g.userData.k = S.light ? .45 : 1; g.material.opacity = g.userData.baseOpacity * g.userData.k; g.material.needsUpdate = true; });
+    scanMat.color.set(S.light ? 0xb8891f : GOLD); scanMat.blending = blend; scanMat.needsUpdate = true;
     renderer.toneMappingExposure = S.light ? 1.15 : 1.05;
+    if (S.started && !S.running) requestRender();
   }
   applyTheme();
   new MutationObserver(applyTheme).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
-  addEventListener('pointermove', (e) => {
-    S.target.set((e.clientX / innerWidth) * 2 - 1, (e.clientY / innerHeight) * 2 - 1);
-    S.lastMove = clock.elapsedTime;
+  /* ---- pointer: follow the real cursor position, relative to the head on screen */
+  const onPointer = (e) => {
+    S.pointer.x = e.clientX; S.pointer.y = e.clientY;
+    if (e.pointerType === 'touch') S.pointer.touchAt = performance.now() / 1000;
+    else S.pointer.inside = true;
     if (reduced) requestRender();
+  };
+  addEventListener('pointermove', onPointer, { passive: true });
+  addEventListener('pointerdown', onPointer, { passive: true });
+  document.documentElement.addEventListener('mouseleave', () => { S.pointer.inside = false; });
+  addEventListener('blur', () => { S.pointer.inside = false; });
+  addEventListener('scroll', () => {
+    S.scroll = Math.min(scrollY / innerHeight, 1.2);
+    S.rect = stage.getBoundingClientRect();
   }, { passive: true });
-  addEventListener('scroll', () => { S.scroll = Math.min(scrollY / innerHeight, 1.2); }, { passive: true });
 
-  new IntersectionObserver(([en]) => { S.visible = en.isIntersecting; kick(); }, { threshold: 0 }).observe(stage);
+  new IntersectionObserver(([en]) => { S.visible = en.isIntersecting; kick(); if (S.visible && reduced) requestRender(); }, { threshold: 0 }).observe(stage);
   document.addEventListener('visibilitychange', kick);
 
   /* ---- speech bubble */
@@ -422,14 +444,34 @@ function init() {
     if (!bubble) return;
     bubble.textContent = MESSAGES[i % MESSAGES.length];
     bubble.classList.add('is-show');
+    placeOverlays();
     clearTimeout(S.bubbleTimer);
     S.bubbleTimer = setTimeout(() => bubble.classList.remove('is-show'), 4200);
   }
-  stage.addEventListener('click', () => {
+  function greet() {
     if (!S.built) return;
     S.greetT = 0; S.msg++; say(S.msg); kick();
+    if (reduced) requestRender();
+  }
+  const ray = new THREE.Raycaster();
+  const ndc = new THREE.Vector2();
+  const hitTargets = solids;
+  function hits(e) {
+    const r = canvas.getBoundingClientRect();
+    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    return ray.intersectObjects(hitTargets, false).length > 0;
+  }
+  canvas.addEventListener('click', (e) => { if (hits(e)) greet(); });
+  let hoverQueued = false;
+  canvas.addEventListener('pointermove', (e) => {
+    if (hoverQueued || e.pointerType === 'touch') return;
+    hoverQueued = true;
+    requestAnimationFrame(() => { hoverQueued = false; stage.classList.toggle('is-hover', S.built && hits(e)); });
   });
-  stage.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); stage.click(); } });
+  canvas.addEventListener('pointerleave', () => stage.classList.remove('is-hover'));
+  const sayBtn = stage.querySelector('.robot__say');
+  if (sayBtn) sayBtn.addEventListener('click', greet);
 
   /* ---- build sequence */
   const BUILD = 2.6;
@@ -465,18 +507,49 @@ function init() {
   }
   let pending = false;
   function requestRender() {
-    if (pending) return; pending = true;
-    requestAnimationFrame(() => { pending = false; update(1 / 60); renderer.render(scene, camera); });
+    if (pending || !S.visible || document.hidden) return; pending = true;
+    requestAnimationFrame(() => { pending = false; update(1 / 60); renderer.render(scene, camera); placeOverlays(); });
   }
+  let acc = 0;
   function loop() {
     if (!S.running) return;
-    const dt = Math.min(clock.getDelta(), .05);
+    raf = requestAnimationFrame(loop);
+    acc += clock.getDelta();
+    if (acc < 1 / 62) return;              // no point drawing faster than 60 fps
+    const dt = Math.min(acc, .05); acc = 0;
     update(dt);
     renderer.render(scene, camera);
-    raf = requestAnimationFrame(loop);
+    placeOverlays();
   }
 
   const eyeWorld = new THREE.Vector3();
+  const headWorld = new THREE.Vector3();
+  const tmpV = new THREE.Vector3();
+  const hudCore = stage.querySelector('.robot__hud--a');
+  const hudStack = stage.querySelector('.robot__hud--b');
+  const toStage = (v) => { v.project(camera); return { x: (v.x + 1) / 2 * S.w, y: (1 - v.y) / 2 * S.h }; };
+  const last = { core: -1, stack: -1, bx: -1, by: -1 };
+  function setTop(el, key, y) {
+    if (!el) return;
+    const top = Math.round(y - el.offsetHeight / 2);
+    if (top !== last[key]) { el.style.top = top + 'px'; el.style.bottom = 'auto'; last[key] = top; }
+  }
+  function placeOverlays() {
+    if (S.w >= 560) {
+      core.getWorldPosition(tmpV); setTop(hudCore, 'core', toStage(tmpV).y);
+      headPivot.getWorldPosition(tmpV); tmpV.y += .38; setTop(hudStack, 'stack', toStage(tmpV).y);
+    }
+    if (bubble && bubble.classList.contains('is-show')) {
+      headPivot.getWorldPosition(tmpV); tmpV.y += 1.08;
+      const top = toStage(tmpV);
+      headPivot.getWorldPosition(tmpV); tmpV.x += .55; tmpV.y += .55;
+      const side = toStage(tmpV);
+      const bw = bubble.offsetWidth, bh = bubble.offsetHeight;
+      const bx = Math.round(Math.min(Math.max(side.x - 6, 8), S.w - bw - 8));
+      const by = Math.round(Math.max(top.y - bh * .55, 4));
+      if (bx !== last.bx || by !== last.by) { bubble.style.left = bx + 'px'; bubble.style.right = 'auto'; bubble.style.top = by + 'px'; last.bx = bx; last.by = by; }
+    }
+  }
   function update(dt) {
     const t = clock.elapsedTime;
 
@@ -486,8 +559,8 @@ function init() {
       const p = easeInOut(S.buildT / BUILD);
       const c = lerp(REVEAL_FROM, REVEAL_TO, p);
       setReveal(c);
-      scanMat.opacity = S.buildT < .2 ? S.buildT * 5 : (p > .92 ? (1 - p) / .08 : 1);
-      wireMat.opacity = .07 * (1 - Math.max(0, (S.buildT - BUILD) / .4));
+      scanMat.opacity = (S.buildT < .2 ? S.buildT * 5 : (p > .92 ? (1 - p) / .08 : 1)) * (S.light ? .5 : 1);
+      wireMat.opacity = (S.light ? .2 : .07) * (1 - Math.max(0, (S.buildT - BUILD) / .4));
       eyes[0].getWorldPosition(eyeWorld);
       const lit = ease((c - eyeWorld.y) / .5);
       eyes.forEach((e) => e.userData.dots.forEach((d) => d.userData.mat.color.copy(GOLD).multiplyScalar(lit)));
@@ -495,16 +568,29 @@ function init() {
       if (S.buildT > BUILD + .45) finishBuild();
     }
 
-    /* look at the cursor; drift on touch screens */
-    const idle = !finePointer || t - S.lastMove > 4;
-    if (idle) S.target.set(Math.sin(t * .45) * .55, Math.sin(t * .31) * .25 - .05);
-    S.mouse.lerp(S.target, reduced ? 1 : 1 - Math.pow(.0009, dt));
-    const mx = S.mouse.x, my = S.mouse.y;
-    headPivot.rotation.y = mx * .62;
-    headPivot.rotation.x = my * .28;
-    body.rotation.y = mx * .16 + S.scroll * .5;
+    /* look at the cursor: aim from the head's on-screen position, not the page centre */
+    const tracking = S.pointer.inside || performance.now() / 1000 - S.pointer.touchAt < 2.5;
+    if (tracking && S.rect) {
+      headPivot.getWorldPosition(headWorld);
+      headWorld.y += .4;                       // centre of the visor
+      headWorld.project(camera);
+      const hx = S.rect.left + (headWorld.x + 1) / 2 * S.rect.width;
+      const hy = S.rect.top + (1 - headWorld.y) / 2 * S.rect.height;
+      const depth = Math.max(S.rect.height * .7, 320); // how far "out of the screen" the viewer sits
+      S.lookTarget.set(
+        THREE.MathUtils.clamp(Math.atan2(S.pointer.x - hx, depth), -.9, .9),
+        THREE.MathUtils.clamp(Math.atan2(S.pointer.y - hy, depth), -.5, .55),
+      );
+    } else {
+      S.lookTarget.set(Math.sin(t * .45) * .4, Math.sin(t * .31) * .12);
+    }
+    S.look.lerp(S.lookTarget, reduced ? 1 : 1 - Math.pow(.0012, dt));
+    const yaw = S.look.x, pitch = S.look.y;
+    headPivot.rotation.y = yaw * .8;
+    headPivot.rotation.x = pitch * .9;
+    body.rotation.y = yaw * .2;
     robot.rotation.x = S.scroll * .12;
-    eyes.forEach((e) => { e.rotation.y = mx * .07; e.position.y = EYE_Y - my * .012; });
+    eyes.forEach((e) => { e.rotation.y = yaw * .1; e.position.y = EYE_Y - pitch * .03; });
 
     /* breathing + float */
     if (!reduced) {
@@ -544,7 +630,7 @@ function init() {
           d.userData.mat.color.copy(GOLD).multiplyScalar(flicker + boost * .9 + happy * .4);
           d.position.y = happy * (.022 - Math.abs(i - (DOTS - 1) / 2) * .014);
         });
-        e.userData.glow.material.opacity = .45 + happy * .3;
+        e.userData.glow.material.opacity = (.45 + happy * .3) * (e.userData.glow.userData.k || 1);
       });
     }
 
@@ -554,7 +640,7 @@ function init() {
     coreGlow.scale.setScalar(.6 + beat * .22);
     coreDisc.rotation.z = Math.PI / 2 + t * .4;
     tipMat.color.copy(GOLD).multiplyScalar(Math.sin(t * 3) > .6 ? 1.6 : .45);
-    tipGlow.material.opacity = Math.sin(t * 3) > .6 ? .9 : .25;
+    tipGlow.material.opacity = (Math.sin(t * 3) > .6 ? .9 : .25) * (tipGlow.userData.k || 1);
     earDots.forEach((m, i) => m.color.copy(GOLD).multiplyScalar(.6 + .4 * Math.sin(t * 2 + i * 1.6)));
 
     /* rings + particles */
@@ -569,6 +655,8 @@ function init() {
   }
 
   /* start once the preloader is gone */
+  renderer.render(scene, camera);
+  stage.classList.add('is-live');
   if (window.__siteReady) start();
   else addEventListener('site:ready', start, { once: true });
   setTimeout(start, 7000);
@@ -580,4 +668,5 @@ if (stage && canvas && hasGL) {
   try { init(); } catch (err) { console.warn('[robot] falling back to poster:', err); stage.classList.add('is-fallback'); }
 } else if (stage) {
   stage.classList.add('is-fallback');
+  stage.setAttribute('aria-label', 'AI robot illustration');
 }

@@ -1,6 +1,6 @@
 # Syed Abdul Kareem — Portfolio
 
-Static portfolio site (no build step). Open `index.html`, or serve the folder:
+Static portfolio site (no build step). Serve the folder with any web server (the 3D robot is an ES module, which browsers will not load from a double-clicked `file://` page; the site then shows a still image of the robot instead):
 
 ```
 python3 -m http.server 8000
