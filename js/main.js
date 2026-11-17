@@ -40,7 +40,7 @@
       logo: 'assets/img/kadapa-cars-logo.webp', plate: '#ffffff', brand: '#2557d6',
       desc: 'A website I built with AI.',
       tags: ['Website', 'Built with AI'],
-      url: '',
+      url: 'https://kadapacars.com/',
     },
   ];
 
@@ -131,12 +131,25 @@
   }
 
   /* ---------- Theme ---------- */
-  $('#themeToggle').addEventListener('click', () => {
+  $('#themeToggle').addEventListener('click', (e) => {
     const next = root.dataset.theme === 'light' ? 'dark' : 'light';
-    root.classList.add('theme-anim');
-    clearTimeout(root._themeT);
-    root._themeT = setTimeout(() => root.classList.remove('theme-anim'), 550);
-    root.dataset.theme = next;
+    const apply = () => { root.dataset.theme = next; };
+    // sunrise / nightfall: the new theme spreads in a circle from the button you clicked
+    if (document.startViewTransition && !reduced) {
+      const r = e.currentTarget.getBoundingClientRect();
+      const x = r.left + r.width / 2, y = r.top + r.height / 2;
+      const end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+      root.dataset.to = next;
+      document.startViewTransition(apply).ready.then(() => {
+        root.animate({ clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${end}px at ${x}px ${y}px)`] },
+          { duration: 900, easing: 'cubic-bezier(.65,0,.35,1)', pseudoElement: '::view-transition-new(root)' });
+      });
+    } else {
+      root.classList.add('theme-anim');
+      clearTimeout(root._themeT);
+      root._themeT = setTimeout(() => root.classList.remove('theme-anim'), 550);
+      apply();
+    }
     $('#themeToggle').setAttribute('aria-pressed', String(next === 'light'));
     $('meta[name="theme-color"]').content = next === 'light' ? '#f6f2e9' : '#09090a';
     try { localStorage.setItem('theme', next); } catch (e) { /* storage unavailable */ }
