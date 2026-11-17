@@ -575,3 +575,8 @@ html:has(dialog[open]) { overflow: hidden; }
   .js .reveal { opacity: 1; transform: none; }
   .fx { display: none; }
 }
+
+/* theme switch: circle reveal from the toggle (sunrise / nightfall) */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-new(root) { filter: drop-shadow(0 0 40px rgba(214, 176, 76, .55)); }
+.phone__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.62); }
