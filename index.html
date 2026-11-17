@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Syed Abdul Kareem — AI Builder</title>
+<meta name="description" content="Syed Abdul Kareem is an AI Builder from Kadapa, India. Apps, websites, videos and marketing, built end to end with AI. 4 years of hands-on AI experience.">
+<meta name="theme-color" content="#09090a">
+<meta property="og:title" content="Syed Abdul Kareem — AI Builder">
+<meta property="og:description" content="I build real products with AI. Apps, websites, videos and marketing, built end to end.">
+<meta property="og:image" content="assets/img/robot-poster.webp">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2309090a'/%3E%3Ctext x='32' y='43' font-family='Arial Black,Arial' font-weight='900' font-size='28' text-anchor='middle' fill='%23d6b04c'%3ESK%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/bebas-neue.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/outfit.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="modulepreload" href="js/vendor/three.module.min.js">
+<link rel="stylesheet" href="css/styles.css">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) { document.documentElement.dataset.theme = t; if (t === 'light') document.querySelector('meta[name="theme-color"]').content = '#f6f2e9'; } } catch (e) {}
+  document.documentElement.classList.add('js');
+</script>
+</head>
+<body>
+
+<!-- Boot screen -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader__inner">
+    <p class="preloader__name">Syed Abdul Kareem</p>
+    <p class="preloader__role">AI Builder</p>
+    <div class="preloader__bar"><span id="preloaderBar"></span></div>
+    <p class="preloader__log"><span id="preloaderLog">Booting AI systems</span> · <span id="preloaderPct">0</span>%</p>
+  </div>
+</div>
+
+<canvas id="fx" class="fx" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- Navigation -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="#top" aria-label="Syed Abdul Kareem, back to top">
+    <span class="nav__mark" aria-hidden="true">SK</span>
+    <span class="nav__name">Syed Abdul Kareem</span>
+  </a>
+  <nav class="nav__links" id="navLinks" aria-label="Primary">
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#services">Services</a>
+    <a href="#reel">Reel</a>
+    <a href="#process">Process</a>
+    <a href="#toolkit">Toolkit</a>
+    <a href="#contact" class="nav__cta">Hire me</a>
+  </nav>
+  <button class="nav__theme" id="themeToggle" type="button" aria-label="Switch colour theme">
+    <svg class="i-moon" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M20.4 14.6A8.5 8.5 0 0 1 9.4 3.6a.75.75 0 0 0-.96-.93A10 10 0 1 0 21.33 15.56a.75.75 0 0 0-.93-.96Z"/></svg>
+    <svg class="i-sun" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M5.3 18.7l1.5-1.5M17.2 6.8l1.5-1.5"/></g></svg>
+  </button>
+  <button class="nav__burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span></button>
+</header>
+
+<main id="main">
+
+<!-- ============================== HERO -->
+<section class="hero" id="top">
+  <div class="hero__copy">
+    <p class="hero__status"><span class="dot dot--live"></span>Available for work <i></i> Kadapa, India</p>
+    <p class="eyebrow hero__eyebrow">AI Builder</p>
+    <h1 class="hero__name" aria-label="Syed Abdul Kareem">
+      <span class="hero__line"><span class="hero__fill">Syed Abdul</span></span>
+      <span class="hero__line"><span class="hero__outline">Kareem</span></span>
+    </h1>
+    <p class="hero__lead">I build real products with AI.</p>
+    <p class="hero__sub">Apps, websites, videos and marketing, built end to end with AI. <em>4&nbsp;years of hands-on AI experience.</em></p>
+    <div class="hero__cta">
+      <a class="btn btn--solid" href="#work"><span>See what I shipped</span></a>
+      <a class="btn" href="#contact"><span>Start a project</span></a>
+    </div>
+    <dl class="hero__stats">
+      <div><dt>Hours with AI (est.)</dt><dd><span data-count="8000" data-format="comma">8,000</span>+</dd></div>
+      <div><dt>Using AI daily since</dt><dd><span data-count="2022">2022</span></dd></div>
+      <div><dt>Products shipped</dt><dd><span data-count="4">4</span></dd></div>
+      <div><dt>AI platforms daily</dt><dd><span data-count="4">4</span></dd></div>
+    </dl>
+  </div>
+
+  <div class="robot" id="robotStage" role="group" aria-label="Interactive 3D robot. It follows your cursor or finger; tap or click it to say hello.">
+    <div class="robot__glow" aria-hidden="true"></div>
+    <canvas id="robotCanvas" class="robot__canvas" aria-hidden="true"></canvas>
+    <img class="robot__poster" src="assets/img/robot-poster.webp" alt="" width="900" height="1000" fetchpriority="high">
+    <p class="robot__bubble" id="robotBubble" aria-live="polite"></p>
+    <div class="robot__hud robot__hud--a" aria-hidden="true"><span>AI core</span><b><i class="dot dot--live"></i>Online</b></div>
+    <div class="robot__hud robot__hud--b" aria-hidden="true"><span>Daily stack</span><b class="robot__logos"><img class="lg" src="assets/logos/claude.svg" alt=""><i class="lg lg--mono lg--openai"></i><img class="lg" src="assets/logos/antigravity.svg" alt=""><i class="lg lg--mono lg--ollama"></i></b></div>
+    <p class="robot__hint" aria-hidden="true"><span class="robot__hint-fine">Click</span><span class="robot__hint-touch">Tap</span> the robot to say hi</p>
+    <button class="robot__say" type="button">Say hello to the robot</button>
+  </div>
+</section>
+
+<!-- Marquee: what I build + the stack I build it with -->
+<section class="marquee" id="marquee" tabindex="0" aria-label="What I build and the AI stack I use. Moving band: hover, tap or focus it to pause.">
+  <p class="sr-only">I build apps, websites, AI videos and marketing, end to end with AI, using Claude Max, ChatGPT Pro, Google Antigravity Pro and open-source models run locally.</p>
+  <div class="marquee__row marquee__row--words" data-dir="-1" data-speed="46" aria-hidden="true">
+    <div class="marquee__track"><span class="mw">Apps</span><span class="ms">✦</span><span class="mw mw--o">Websites</span><span class="ms">✦</span><span class="mw">AI Videos</span><span class="ms">✦</span><span class="mw mw--o">Marketing</span><span class="ms">✦</span><span class="mw">Built end to end with AI</span><span class="ms">✦</span></div>
+  </div>
+  <div class="marquee__row marquee__row--logos" data-dir="1" data-speed="34" aria-hidden="true">
+    <div class="marquee__track"><span class="pill"><img class="lg" src="assets/logos/claude.svg" alt="" width="22" height="22">Claude Max</span><span class="pill"><i class="lg lg--mono lg--openai"></i>ChatGPT Pro</span><span class="pill"><img class="lg" src="assets/logos/antigravity.svg" alt="" width="22" height="22">Google Antigravity Pro</span><span class="pill"><i class="lg lg--mono lg--ollama"></i>Ollama</span><span class="pill"><img class="lg" src="assets/logos/meta.svg" alt="" width="22" height="22">Llama</span><span class="pill"><img class="lg" src="assets/logos/mistral.svg" alt="" width="22" height="22">Mistral</span><span class="pill"><img class="lg" src="assets/logos/deepseek.svg" alt="" width="22" height="22">DeepSeek</span><span class="pill"><img class="lg" src="assets/logos/qwen.svg" alt="" width="22" height="22">Qwen</span><span class="pill"><img class="lg" src="assets/logos/huggingface.svg" alt="" width="22" height="22">Hugging Face</span><span class="pill"><i class="lg lg--mono lg--react" style="--c:#61DAFB;--cl:#0a86b5"></i>React</span><span class="pill"><i class="lg lg--mono lg--firebase" style="--c:#FFCA28;--cl:#e69500"></i>Firebase</span><span class="pill"><i class="lg lg--mono lg--javascript" style="--c:#F7DF1E;--cl:#c9a700"></i>JavaScript</span></div>
+  </div>
+</section>
+
+<!-- ============================== ABOUT -->
+<section class="section about" id="about">
+  <figure class="about__photo reveal">
+    <div class="about__frame">
+      <img src="assets/img/abdul-portrait.webp" alt="Portrait of Syed Abdul Kareem" width="771" height="941" loading="lazy">
+      <span class="corner corner--tl"></span><span class="corner corner--tr"></span><span class="corner corner--bl"></span><span class="corner corner--br"></span>
+    </div>
+    <figcaption><b>Syed Abdul Kareem</b><span>AI Builder · Kadapa, Andhra Pradesh, India</span></figcaption>
+  </figure>
+
+  <div class="about__text">
+    <p class="eyebrow reveal">About</p>
+    <h2 class="title reveal">The human<br><span class="title__outline">behind the AI</span></h2>
+    <p class="about__lead reveal">I have used AI for hours every day since ChatGPT opened to the public in 2022.</p>
+    <p class="body reveal">That is about <mark>6 hours a day</mark> across Claude, ChatGPT, Antigravity and open-source models run locally, or <mark>8,000+ hours</mark> (est.) of hands-on use. I put all of it into one thing: building real products, end to end, with AI.</p>
+
+    <ol class="journey reveal" aria-label="Journey, 2022 to 2026">
+      <li>
+        <p class="journey__when">2022</p>
+        <p>Started using AI daily, from when ChatGPT opened to the public.</p>
+      </li>
+      <li>
+        <p class="journey__when">2022 – 2026</p>
+        <p>About 6 hours a day across Claude, ChatGPT, Antigravity and local models.</p>
+      </li>
+      <li>
+        <p class="journey__when"><span class="dot dot--live"></span>Now</p>
+        <p>Shipped Kadapa Cars, CricApex, HOOR-E-AIN and WaqtOS with AI.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================== WORK -->
+<section class="section work" id="work">
+  <header class="shead">
+    <div>
+      <p class="eyebrow reveal">Selected work</p>
+      <h2 class="title reveal">What I <span class="title__outline">Shipped</span></h2>
+    </div>
+    <p class="shead__lede reveal">Four products, built and shipped with AI. Open any card for the full case study.</p>
+  </header>
+  <div class="projects" id="projects"></div>
+</section>
+
+<!-- ============================== SERVICES -->
+<section class="section services" id="services">
+  <header class="shead">
+    <div>
+      <p class="eyebrow reveal">Services</p>
+      <h2 class="title reveal">What I can <span class="title__outline">build for you</span></h2>
+    </div>
+    <p class="shead__lede reveal">From the first idea to a working product, every step powered by AI.</p>
+  </header>
+  <div class="services__grid">
+    <article class="svc reveal">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 18.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <p class="svc__num">01</p>
+      <h3>AI App Development</h3>
+      <p>Web and mobile apps built from idea to working product with AI.</p>
+    </article>
+    <article class="svc reveal">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 8.5h19M6 6.3h.01M8.5 6.3h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <p class="svc__num">02</p>
+      <h3>AI Websites &amp; Landing Pages</h3>
+      <p>Clean, fast, responsive websites designed and built end to end with AI.</p>
+    </article>
+    <article class="svc reveal">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="13" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M15.5 10l6-3.5v11l-6-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      <p class="svc__num">03</p>
+      <h3>AI Video Production</h3>
+      <p>Short-form AI videos and visual reels produced with generative AI tools.</p>
+    </article>
+    <article class="svc reveal">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <p class="svc__num">04</p>
+      <h3>AI Marketing &amp; Brand Content</h3>
+      <p>Brand visuals, creative assets and product content built with AI.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============================== REEL -->
+<section class="section reel" id="reel">
+  <div class="reel__text">
+    <p class="eyebrow reveal">AI video · Demo reel</p>
+    <h2 class="title reveal">Made with<br><span class="title__outline">generative AI</span></h2>
+    <p class="body reveal">A vertical short, produced end to end with generative AI. Press play: it runs right here on the page.</p>
+    <ul class="reel__facts reveal">
+      <li><b>Format</b>Vertical short</li>
+      <li><b>Made with</b>Generative AI tools</li>
+    </ul>
+  </div>
+  <div class="reel__stage reveal">
+    <div class="phone" id="reelPlayer" data-embed="https://www.youtube-nocookie.com/embed/nXBdBgQvUWE" data-id="nXBdBgQvUWE">
+      <div class="phone__cover" aria-hidden="true">
+        <span class="phone__grid"></span>
+        <span class="phone__big">AI</span>
+        <span class="phone__small">Video reel</span>
+      </div>
+      <button class="phone__play" type="button" id="reelPlay">
+        <span><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a.8.8 0 0 0 1.2.7l10.5-6.5a.8.8 0 0 0 0-1.4L9.2 4.8A.8.8 0 0 0 8 5.5Z"/></svg></span>
+        <em>Play reel</em>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== PROCESS -->
+<section class="section process" id="process">
+  <header class="shead">
+    <div>
+      <p class="eyebrow reveal">Process</p>
+      <h2 class="title reveal">How I <span class="title__outline">build</span></h2>
+    </div>
+    <p class="shead__lede reveal">Three steps, the same every time, so the result is something people can actually use.</p>
+  </header>
+  <ol class="steps">
+    <li class="step reveal">
+      <p class="step__num">01</p>
+      <h3>Brief it clearly</h3>
+      <p>Start with the real problem, the user flow, and the exact outcome needed before generating a single screen or line of code.</p>
+    </li>
+    <li class="step reveal">
+      <p class="step__num">02</p>
+      <h3>Build it with AI</h3>
+      <p>Combine Claude Max, ChatGPT Pro, Google Antigravity Pro, and local models with modern web tools to build the working product step by step.</p>
+    </li>
+    <li class="step reveal">
+      <p class="step__num">03</p>
+      <h3>Ship and refine</h3>
+      <p>Test on real devices, tighten every interaction, polish the copy and visuals, and ship a reliable product that people can actually use.</p>
+    </li>
+  </ol>
+</section>
+
+<!-- ============================== TOOLKIT -->
+<section class="section toolkit" id="toolkit">
+  <header class="shead">
+    <div>
+      <p class="eyebrow reveal">Toolkit</p>
+      <h2 class="title reveal">What I <span class="title__outline">wield</span></h2>
+    </div>
+    <p class="shead__lede reveal">Four AI platforms in daily use, paired with modern web tools.</p>
+  </header>
+  <div class="ai-grid">
+    <article class="ai reveal" style="--c:#d97757">
+      <div class="ai__logo"><img src="assets/logos/claude.svg" alt="" width="40" height="40"></div>
+      <h3>Claude Max</h3><p>Daily use</p>
+    </article>
+    <article class="ai reveal" style="--c:#10a37f">
+      <div class="ai__logo"><i class="lg lg--mono lg--openai"></i></div>
+      <h3>ChatGPT Pro</h3><p>Daily use</p>
+    </article>
+    <article class="ai reveal" style="--c:#4c8df6">
+      <div class="ai__logo"><img src="assets/logos/antigravity.svg" alt="" width="40" height="40"></div>
+      <h3>Google Antigravity Pro</h3><p>Daily use</p>
+    </article>
+    <article class="ai ai--oss reveal" style="--c:#b48cff">
+      <div class="ai__stack" aria-hidden="true"><span title="Ollama"><i class="lg lg--mono lg--ollama"></i></span><span title="Llama"><img class="lg" src="assets/logos/meta.svg" alt="" width="22" height="22"></span><span title="Mistral"><img class="lg" src="assets/logos/mistral.svg" alt="" width="22" height="22"></span><span title="DeepSeek"><img class="lg" src="assets/logos/deepseek.svg" alt="" width="22" height="22"></span><span title="Qwen"><img class="lg" src="assets/logos/qwen.svg" alt="" width="22" height="22"></span><span title="Hugging Face"><img class="lg" src="assets/logos/huggingface.svg" alt="" width="22" height="22"></span></div>
+      <h3>Open-source models</h3><p>Run locally</p>
+    </article>
+  </div>
+  <div class="kit">
+    <div class="kit__group reveal" style="--n:4">
+      <h3>What I build with AI</h3>
+      <ul class="tiles"><li class="tile"><span class="tile__logo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 18.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="tile__name">Apps</span></li><li class="tile"><span class="tile__logo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 8.5h19M6 6.3h.01M8.5 6.3h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="tile__name">Websites</span></li><li class="tile"><span class="tile__logo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="13" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15.5 10l6-3.5v11l-6-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><span class="tile__name">Videos</span></li><li class="tile"><span class="tile__logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="tile__name">Marketing content</span></li></ul>
+    </div>
+    <div class="kit__group reveal" style="--n:5">
+      <h3>Tech used</h3>
+      <ul class="tiles"><li class="tile" style="--c:#E34F26"><span class="tile__logo"><i class="lg lg--mono lg--html5" style="--c:#E34F26"></i></span><span class="tile__name">HTML</span></li><li class="tile" style="--c:#8b5cf6"><span class="tile__logo"><i class="lg lg--mono lg--css" style="--c:#8b5cf6;--cl:#663399"></i></span><span class="tile__name">CSS</span></li><li class="tile" style="--c:#F7DF1E"><span class="tile__logo"><i class="lg lg--mono lg--javascript" style="--c:#F7DF1E;--cl:#c9a700"></i></span><span class="tile__name">JavaScript</span></li><li class="tile" style="--c:#61DAFB"><span class="tile__logo"><i class="lg lg--mono lg--react" style="--c:#61DAFB;--cl:#0a86b5"></i></span><span class="tile__name">React</span></li><li class="tile" style="--c:#FFCA28"><span class="tile__logo"><i class="lg lg--mono lg--firebase" style="--c:#FFCA28;--cl:#e69500"></i></span><span class="tile__name">Firebase</span></li></ul>
+    </div>
+    <div class="kit__group reveal" style="--n:2">
+      <h3>Design &amp; CMS</h3>
+      <ul class="tiles"><li class="tile" style="--c:#00c4cc"><span class="tile__logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5C21 6.4 17 3 12 3Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="11.5" r="1.3" fill="currentColor"/><circle cx="10" cy="7.5" r="1.3" fill="currentColor"/><circle cx="14.5" cy="7.5" r="1.3" fill="currentColor"/><circle cx="17" cy="11" r="1.3" fill="currentColor"/></svg></span><span class="tile__name">Canva</span></li><li class="tile" style="--c:#3d9bd1"><span class="tile__logo"><i class="lg lg--mono lg--wordpress" style="--c:#3d9bd1;--cl:#21759B"></i></span><span class="tile__name">WordPress</span></li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== EDUCATION -->
+<section class="section edu" id="education">
+  <header class="shead">
+    <div>
+      <p class="eyebrow reveal">Education &amp; certification</p>
+      <h2 class="title reveal">Credentials</h2>
+    </div>
+    <p class="shead__lede reveal">Formal study and training behind the hands-on work.</p>
+  </header>
+  <div class="edu__grid">
+    <article class="cred reveal">
+      <p class="cred__kind">Degree</p>
+      <h3>Bachelor of Arts (BA)</h3>
+      <p class="cred__org">Maulana Azad National Urdu University (MANUU), Hyderabad</p>
+      <div class="cred__meta"><span>Mar 2021 – Jul 2024</span><b>CGPA 7.62</b></div>
+    </article>
+    <article class="cred reveal">
+      <p class="cred__kind">Certificate</p>
+      <h3>Full Stack Digital Marketing Course</h3>
+      <p class="cred__org">WsCube Tech</p>
+      <div class="cred__meta"><span>Nov 2024 – Apr 2025</span><b>Grade A+</b></div>
+    </article>
+  </div>
+</section>
+
+<!-- ============================== CONTACT -->
+<section class="section contact" id="contact">
+  <p class="eyebrow reveal">Ready to start a project?</p>
+  <div class="contact__head reveal">
+    <span class="contact__ghost" aria-hidden="true">Connect</span>
+    <h2 class="contact__title">Let’s build<br>something real</h2>
+  </div>
+  <div class="links reveal">
+    <a class="link link--wide" href="mailto:syedabdulkareempersonal@gmail.com">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Zm2.3.5 6.7 5.2L18.7 7H5.3ZM19 8.6l-6.4 5a1 1 0 0 1-1.2 0L5 8.6V17h14V8.6Z"/></svg>
+      <span class="link__label">Email me</span>
+      <span class="link__value">syedabdulkareempersonal@gmail.com</span>
+    </a>
+    <a class="link link--wide" href="https://www.linkedin.com/in/syedabdulkareemofficial/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.5 3h15A1.5 1.5 0 0 1 21 4.5v15a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-15A1.5 1.5 0 0 1 4.5 3Zm3.2 15.3V10H5.1v8.3h2.6ZM6.4 8.8a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm12.5 9.5v-4.6c0-2.4-1.3-3.9-3.3-3.9-1.2 0-2 .6-2.4 1.3V10h-2.6v8.3h2.6v-4.5c0-1.1.6-1.8 1.6-1.8.9 0 1.5.7 1.5 1.8v4.5h2.6Z"/></svg>
+      <span class="link__label">LinkedIn</span>
+      <span class="link__value">/in/syedabdulkareemofficial</span>
+    </a>
+    <a class="link" href="tel:+919515624770">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.2 3.5c.5 0 .9.3 1 .8l.9 3.6a1 1 0 0 1-.3 1L7.1 10.5a12.5 12.5 0 0 0 6.4 6.4l1.6-1.7a1 1 0 0 1 1-.3l3.6.9c.5.1.8.5.8 1v3.2a1 1 0 0 1-1 1C10.9 21 3 13.1 3 4.5a1 1 0 0 1 1-1h3.2Z"/></svg>
+      <span class="link__label">Call</span>
+      <span class="link__value">+91 95156 24770</span>
+    </a>
+    <a class="link" href="#work">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M4 5.5h16v10H4zM9 19.5h6M12 15.5v4"/></svg>
+      <span class="link__label">Work</span>
+      <span class="link__value">4 products shipped</span>
+    </a>
+    <a class="link" href="#reel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a.8.8 0 0 0 1.2.7l10.5-6.5a.8.8 0 0 0 0-1.4L9.2 4.8A.8.8 0 0 0 8 5.5Z"/></svg>
+      <span class="link__label">Reel</span>
+      <span class="link__value">Watch the AI video</span>
+    </a>
+    <div class="link link--static">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.1 6.2 12.3 6.5 12.6a.7.7 0 0 0 1 0C12.8 21.3 19 14.1 19 9a7 7 0 0 0-7-7Zm0 9.6A2.6 2.6 0 1 1 12 6.4a2.6 2.6 0 0 1 0 5.2Z"/></svg>
+      <span class="link__label">Based in</span>
+      <span class="link__value">Kadapa, Andhra Pradesh, India</span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <p>© <span id="year">2026</span> Syed Abdul Kareem · AI Builder</p>
+  <p>Built end to end with AI.</p>
+  <a href="#top">Back to top ↑</a>
+</footer>
+
+<!-- Case study dialog -->
+<dialog class="case" id="case" aria-labelledby="caseName">
+  <div class="case__panel">
+    <button class="case__close" type="button" id="caseClose" aria-label="Close case study" autofocus>✕</button>
+    <div class="case__top">
+      <div class="case__plate" id="casePlate"><img id="caseImg" alt=""></div>
+      <div>
+        <p class="case__kind" id="caseKind"></p>
+        <h3 class="case__name" id="caseName"></h3>
+        <p class="case__status" id="caseStatus"></p>
+      </div>
+    </div>
+    <div class="case__cols">
+      <div>
+        <h4>Project overview</h4>
+        <p id="caseDesc"></p>
+      </div>
+      <div>
+        <h4>Key features</h4>
+        <ul id="caseFeatures"></ul>
+      </div>
+    </div>
+    <div class="case__nav">
+      <button type="button" class="btn btn--sm" id="casePrev"><span>← Previous</span></button>
+      <p id="caseCount" aria-live="polite"></p>
+      <button type="button" class="btn btn--sm" id="caseNext"><span>Next →</span></button>
+    </div>
+  </div>
+</dialog>
+
+<script src="js/main.js" defer></script>
+<script type="module" src="js/robot.js"></script>
+</body>
+</html>
