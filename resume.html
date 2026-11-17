@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Syed Abdul Kareem — AI Builder — Résumé</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+@font-face { font-family: "Bebas Neue"; src: url("assets/fonts/bebas-neue.woff2") format("woff2"); }
+@font-face { font-family: "Outfit"; src: url("assets/fonts/outfit.woff2") format("woff2"); font-weight: 300 700; }
+@font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/jetbrains-mono.woff2") format("woff2"); }
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: #e9e5dc; }
+body { font: 400 8.8pt/1.38 "Outfit", system-ui, sans-serif; color: #17140a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.page { width: 210mm; height: 297mm; overflow: hidden; margin: 0 auto; background: #fff; display: grid; grid-template-columns: 66mm 1fr; }
+a { color: inherit; text-decoration: none; }
+.side { background: #0b0b0a; color: #e9e4d6; padding: 11mm 8mm 9mm 10mm; }
+.main { padding: 11mm 12mm 9mm 10mm; }
+.photo { width: 30mm; height: 30mm; border-radius: 50%; object-fit: cover; object-position: 50% 18%; border: 2px solid #d6b04c; display: block; margin-bottom: 6mm; }
+h1 { font: 400 34pt/.88 "Bebas Neue", Impact, sans-serif; letter-spacing: .01em; text-transform: uppercase; }
+h1 span { color: transparent; -webkit-text-stroke: 1px #8a650c; }
+.role { font: 500 8.5pt "JetBrains Mono", monospace; letter-spacing: .3em; text-transform: uppercase; color: #8a650c; margin: 3mm 0 4mm; }
+.lead { font-size: 11pt; font-weight: 500; }
+.sub { color: #4d483e; margin-top: 1.5mm; }
+h2 { font: 500 7.6pt "JetBrains Mono", monospace; letter-spacing: .26em; text-transform: uppercase; color: #8a650c; display: flex; align-items: center; gap: 2.5mm; margin: 5.5mm 0 2.6mm; }
+h2::after { content: ""; flex: 1; height: 1px; background: #e2d8bf; }
+.side h2 { color: #d6b04c; margin-top: 5.5mm; }
+.side h2::after { background: #2b2820; }
+.side h2:first-of-type { margin-top: 0; }
+.contact li, .side li { list-style: none; }
+.contact li { margin-bottom: 2.2mm; font-size: 8.6pt; line-height: 1.35; }
+.contact b { display: block; font: 500 6.6pt "JetBrains Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: #8d8778; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm 2mm; }
+.stats div strong { display: block; font: 400 20pt/1 "Bebas Neue", sans-serif; color: #d6b04c; }
+.stats div span { font-size: 7.2pt; color: #a7a399; line-height: 1.25; display: block; margin-top: .6mm; }
+.tags { display: flex; flex-wrap: wrap; gap: 1.4mm; }
+.tags li { font-size: 7.8pt; padding: .9mm 2.4mm; border: 1px solid #3a362c; border-radius: 99px; }
+.tags.gold li { border-color: #6b5520; color: #f3e7c0; }
+.stack li { font-size: 8.4pt; padding: 1.1mm 0; border-bottom: 1px solid #22201a; }
+.stack li small { display: block; color: #8d8778; font-size: 7pt; }
+.stats + h2, .tags + h2 { margin-top: 5.5mm; }
+.proj { margin-bottom: 3mm; break-inside: avoid; }
+.proj header { display: flex; justify-content: space-between; align-items: baseline; gap: 3mm; }
+.proj h3 { font: 400 14pt/1 "Bebas Neue", sans-serif; letter-spacing: .03em; }
+.proj h3 em { font: 500 7pt "JetBrains Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: #8a650c; font-style: normal; margin-left: 2mm; }
+.proj a { font: 500 7.2pt "JetBrains Mono", monospace; color: #8a650c; white-space: nowrap; }
+.proj p { color: #3d3930; margin-top: 1mm; }
+.proj ul { display: flex; flex-wrap: wrap; gap: 1.2mm; margin-top: 1.4mm; }
+.proj ul li { list-style: none; font-size: 7.2pt; color: #5a544a; background: #f6f1e4; border-radius: 99px; padding: .5mm 2.2mm; }
+.svc { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4mm 6mm; }
+.svc h3, .steps h3 { font-size: 9.4pt; font-weight: 600; }
+.svc p, .steps p { color: #4d483e; font-size: 8.6pt; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+.steps b { font: 400 16pt/1 "Bebas Neue", sans-serif; color: #8a650c; display: block; }
+.edu { display: grid; grid-template-columns: 1fr auto; gap: .5mm 4mm; margin-bottom: 3mm; }
+.edu h3 { font-size: 9.6pt; font-weight: 600; }
+.edu span { font: 500 7.4pt "JetBrains Mono", monospace; color: #6c665a; text-align: right; }
+.edu p { color: #4d483e; font-size: 8.6pt; }
+.edu i { font-style: normal; font-weight: 600; color: #8a650c; }
+@media print { html { background: #fff; } .page { margin: 0; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <aside class="side">
+    <img class="photo" src="assets/img/abdul-portrait.webp" alt="Syed Abdul Kareem">
+    <h2>Contact</h2>
+    <ul class="contact">
+      <li><b>Email</b><a href="mailto:syedabdulkareempersonal@gmail.com">syedabdulkareempersonal@gmail.com</a></li>
+      <li><b>Phone</b><a href="tel:+919515624770">+91 95156 24770</a></li>
+      <li><b>LinkedIn</b><a href="https://www.linkedin.com/in/syedabdulkareemofficial/">linkedin.com/in/syedabdulkareemofficial</a></li>
+      <li><b>Portfolio</b><a href="https://syedabdulkareempersonal-sketch.github.io/AI-POWERED-BUILDER/">syedabdulkareempersonal-sketch.github.io/AI-POWERED-BUILDER</a></li>
+      <li><b>Location</b>Kadapa, Andhra Pradesh, India</li>
+    </ul>
+    <h2>At a glance</h2>
+    <div class="stats">
+      <div><strong>8,000+</strong><span>hours of hands-on AI use (est.)</span></div>
+      <div><strong>2022</strong><span>using AI daily since</span></div>
+      <div><strong>4</strong><span>products shipped</span></div>
+      <div><strong>4</strong><span>AI platforms in daily use</span></div>
+    </div>
+    <h2>AI platforms · daily</h2>
+    <ul class="stack">
+      <li>Claude Max</li>
+      <li>ChatGPT Pro</li>
+      <li>Google Antigravity Pro</li>
+      <li>Open-source models<small>run locally</small></li>
+    </ul>
+    <h2>Tech used</h2>
+    <ul class="tags"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>React</li><li>Firebase</li></ul>
+    <h2>Design &amp; CMS</h2>
+    <ul class="tags"><li>Canva</li><li>WordPress</li></ul>
+    <h2>What I build with AI</h2>
+    <ul class="tags gold"><li>Apps</li><li>Websites</li><li>Videos</li><li>Marketing content</li></ul>
+  </aside>
+
+  <main class="main">
+    <h1>Syed Abdul<br><span>Kareem</span></h1>
+    <p class="role">AI Builder · Available for work</p>
+    <p class="lead">I build real products with AI.</p>
+    <p class="sub">Apps, websites, videos and marketing, built end to end with AI. 4 years of hands-on AI experience: I have used these tools for about 6 hours every day since ChatGPT opened to the public in 2022.</p>
+
+    <h2>Shipped products</h2>
+    <article class="proj">
+      <header><h3>WaqtOS <em>Personal operating system</em></h3></header>
+      <p>A Salah-centered personal operating system. It brings worship, time management, tasks, schedules and daily responsibilities into one place, so Muslims can live a more organized, balanced and purposeful life.</p>
+      <ul><li>Salah-centered</li><li>Time management</li><li>Tasks and schedules</li><li>Daily responsibilities</li></ul>
+    </article>
+    <article class="proj">
+      <header><h3>HOOR-E-AIN <em>App with AI companion</em></h3></header>
+      <p>A lifetime wellness, family and love companion. It organizes daily routines, tracks health and habits, supports spiritual and personal growth, keeps a private journal, and includes HOOR AI for everyday questions and support.</p>
+      <ul><li>Daily routines</li><li>Health and habits</li><li>Private journal</li><li>HOOR AI</li></ul>
+    </article>
+    <article class="proj">
+      <header><h3>CricApex <em>Sports app</em></h3></header>
+      <p>A full cricket scoring and tournament platform: ball-by-ball live scoring, digital scorecards and player statistics, plus league and knockout tournaments with automatic fixtures, a points table and Net Run Rate. Also includes live match following, live broadcasting support, and player and team records.</p>
+      <ul><li>Live scoring</li><li>Tournaments &amp; fixtures</li><li>Points table &amp; NRR</li><li>Live broadcasting</li></ul>
+    </article>
+    <article class="proj">
+      <header><h3>Kadapa Cars <em>Website</em></h3><a href="https://kadapacars.com/">kadapacars.com ↗</a></header>
+      <p>A website I built with AI.</p>
+    </article>
+
+    <h2>Services</h2>
+    <div class="svc">
+      <div><h3>AI App Development</h3><p>Web and mobile apps built from idea to working product with AI.</p></div>
+      <div><h3>AI Websites &amp; Landing Pages</h3><p>Clean, fast, responsive websites designed and built end to end with AI.</p></div>
+      <div><h3>AI Video Production</h3><p>Short-form AI videos and visual reels produced with generative AI tools.</p></div>
+      <div><h3>AI Marketing &amp; Brand Content</h3><p>Brand visuals, creative assets and product content built with AI.</p></div>
+    </div>
+
+    <h2>How I build</h2>
+    <div class="steps">
+      <div><b>01</b><h3>Brief it clearly</h3><p>The real problem, the user flow and the exact outcome, before a single screen or line of code.</p></div>
+      <div><b>02</b><h3>Build it with AI</h3><p>Claude, ChatGPT, Antigravity and local models with modern web tools, step by step.</p></div>
+      <div><b>03</b><h3>Ship and refine</h3><p>Test on real devices, polish every interaction, and ship something people can use.</p></div>
+    </div>
+
+    <h2>Education &amp; certification</h2>
+    <div class="edu"><h3>Bachelor of Arts (BA)</h3><span>Mar 2021 – Jul 2024</span><p>Maulana Azad National Urdu University (MANUU), Hyderabad · <i>CGPA 7.62</i></p></div>
+    <div class="edu"><h3>Full Stack Digital Marketing Course</h3><span>Nov 2024 – Apr 2025</span><p>WsCube Tech · <i>Grade A+</i></p></div>
+  </main>
+</div>
+</body>
+</html>
