@@ -257,7 +257,7 @@ html.js:not(.js-ready) .reveal { animation: failsafe-in .6s 7.5s forwards; }
 .robot__logos { gap: 9px !important; padding-top: 3px; }
 .robot__logos .lg { width: 18px; height: 18px; }
 .robot__hud::before { content: ""; position: absolute; top: 50%; width: 46px; height: 1px; background: linear-gradient(90deg, var(--gold), transparent); }
-.robot__hud--a::before { left: 100%; }
+.robot__hud--a::before { left: 50%; top: 100%; width: 1px; height: 10px; background: linear-gradient(180deg, var(--gold), transparent); }
 .robot__hud--b::before { right: 100%; transform: scaleX(-1); }
 .robot__hint { position: absolute; left: 50%; bottom: 1%; transform: translateX(-50%); font: 400 9px var(--mono); letter-spacing: .32em; text-transform: uppercase; color: var(--faint); display: flex; align-items: center; gap: 8px; opacity: 0; transition: opacity .8s 3.2s; white-space: nowrap; }
 .robot__hint::before { content: ""; width: 6px; height: 6px; border: 1px solid var(--gold); border-radius: 50%; animation: live 2.2s infinite; }
@@ -542,7 +542,12 @@ html:has(dialog[open]) { overflow: hidden; }
   .hero__name { font-size: clamp(60px, 19vw, 110px); }
   .hero__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
   .hero__stats > div:nth-child(3) { padding-left: 0; border-left: 0; }
-  .robot__hud { display: none; }
+  .robot__hud--b { display: none; }
+  .robot__hud--a { display: flex; align-items: center; gap: 8px; left: 0; right: 0; margin-inline: auto; width: max-content; max-width: calc(100% - 24px); top: auto; bottom: 12px; padding: 6px 12px 6px 10px; border-radius: 99px; }
+  .robot__hud--a span { font-size: 9.5px; letter-spacing: .16em; }
+  .robot__hud--a span::after { content: '·'; margin-left: 8px; color: var(--gold); }
+  .robot__hud--a b { font-size: 11px; }
+  .robot__hud--a::before { display: none; }
   .robot__hud b { font-size: 11px; }
   .robot__hud--b { max-width: 180px; }
   .journey { grid-template-columns: 1fr; gap: 18px; padding-left: 22px; }
@@ -564,7 +569,7 @@ html:has(dialog[open]) { overflow: hidden; }
   .case__top { flex-direction: column; align-items: flex-start; }
   .case__plate { width: 96px; height: 96px; }
   .contact__ghost { bottom: auto; top: -.42em; font-size: 26vw; }
-  .robot__bubble { left: auto; right: var(--pad); max-width: 240px; }
+  .robot__bubble { left: auto; right: var(--pad); max-width: min(212px, 58vw); }
   .footer { grid-template-columns: 1fr; text-align: center; }
   .footer a { justify-self: center; }
 }
@@ -596,3 +601,5 @@ html:has(dialog[open]) { overflow: hidden; }
 /* page-wide shockwave overlay (drawn only while a wave runs) */
 .shock { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 95; pointer-events: none; }
 .robot__hud--a { transition-property: opacity, transform; }
+.robot__hud--a.is-shipping { opacity: .35; }
+@media (min-width: 561px) { .robot.is-live .robot__hud--a { min-width: 176px; } }

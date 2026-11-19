@@ -379,24 +379,24 @@
       ctx.clearRect(0, 0, w, h);
       const sy = scrollY;
       ctx.globalCompositeOperation = 'source-over';
+      let W = window.__shock, Wr = 0;
+      if (W) { Wr = (performance.now() - W.t0) / 1000 * 1100; if (Wr > W.max) { window.__shock = W = null; } }
       for (const s of stars) {
         s.y -= .05 * s.z;
         if (s.y < -4) s.y = h + 4;
         const y = ((s.y - sy * .08 * s.z) % h + h) % h;
         let px = s.x, py = y, boostA = 0;
-        const W = window.__shock;
         if (W) {
-          const r = (performance.now() - W.t0) / 1000 * 1100;
-          if (r > W.max) window.__shock = null;
-          else {
+          {
             const ddx = s.x - W.x, ddy = y - W.y, dd = Math.hypot(ddx, ddy) || 1;
-            const band = Math.exp(-Math.pow((dd - r) / 70, 2));
+            const band = Math.exp(-Math.pow((dd - Wr) / 70, 2));
             px += ddx / dd * band * 28; py += ddy / dd * band * 28; boostA = band;
           }
         }
         const a = (.35 + .65 * Math.abs(Math.sin(t * .8 + s.tw))) * (light ? .45 : .75) * s.z;
-        if (light && !s.gold) continue;
-        ctx.fillStyle = s.gold ? (light ? `rgba(124,92,14,${a * .5})` : `rgba(232,197,90,${a})`) : `rgba(255,255,255,${a * .65})`;
+        if (light && !s.gold && boostA < .15) continue;
+        const aa = a * (1 + boostA * 2.5);
+        ctx.fillStyle = light ? `rgba(124,92,14,${Math.min(1, aa * .5)})` : s.gold ? `rgba(232,197,90,${Math.min(1, aa)})` : `rgba(255,255,255,${Math.min(1, aa * .65)})`;
         ctx.beginPath(); ctx.arc(px, py, s.r * (1 + boostA * 1.6), 0, 6.283); ctx.fill();
       }
       if (mouse.active) {
@@ -439,20 +439,19 @@
     const SPEED = 1100; // px per second
     const sizeShock = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2);
-      shockCanvas.width = innerWidth * dpr; shockCanvas.height = innerHeight * dpr;
+      shockCanvas.width = document.documentElement.clientWidth * dpr; shockCanvas.height = document.documentElement.clientHeight * dpr;
       sx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
-    sizeShock();
-    addEventListener('resize', sizeShock);
 
     const drawShock = (now) => {
-      sx.clearRect(0, 0, innerWidth, innerHeight);
+      const VW = document.documentElement.clientWidth;
+      sx.clearRect(0, 0, VW, innerHeight);
       const light = root.dataset.theme === 'light';
       const rgb = light ? '138,101,12' : '232,197,90';
       for (let i = waves.length - 1; i >= 0; i--) {
         const w = waves[i];
         const r = (now - w.t0) / 1000 * SPEED;
-        const fade = Math.max(0, 1 - r / w.max);
+        const fade = Math.max(0, Math.min(1, (w.max - r) / 320)) * (1 - .3 * r / w.max);
         if (fade <= 0) { waves.splice(i, 1); continue; }
         // a soft flash at the origin, then a bright ring with a wide glowing wake
         if (r < 260) {
@@ -461,7 +460,7 @@
           sx.fillStyle = f; sx.beginPath(); sx.arc(w.x, w.y, 260, 0, 6.283); sx.fill();
         }
         [[46, .07], [22, .14], [9, .3], [2.5, .9]].forEach(([lw, a]) => {
-          sx.strokeStyle = `rgba(${rgb},${a * fade})`; sx.lineWidth = lw;
+          sx.strokeStyle = `rgba(${rgb},${a * fade})`; sx.lineWidth = lw * (1 + r / w.max * .6);
           sx.beginPath(); sx.arc(w.x, w.y, r, 0, 6.283); sx.stroke();
         });
         const r2 = r * .72;  // a second, fainter echo ring behind the first
@@ -469,17 +468,34 @@
         sx.beginPath(); sx.arc(w.x, w.y, r2, 0, 6.283); sx.stroke();
       }
       if (waves.length) shockRaf = requestAnimationFrame(drawShock);
-      else sx.clearRect(0, 0, innerWidth, innerHeight);
+      else { shockCanvas.width = shockCanvas.height = 0; }
     };
 
     // everything on screen gets pushed outward as the wave front passes it
-    const RIPPLE = '.nav, .hero__copy > *, .robot__hud, .marquee__row, .shead, .about__photo, .about__text > *, .journey li, .proj, .svc, .phone, .reel__text > *, .step, .ai, .tile, .cred, .contact__head, .link, .footer > *';
+    const RIPPLE = '.nav, .hero__copy > *, .robot__hud, .marquee__row, .shead, .about__photo, .about__text > :not(.journey), .journey li, .proj, .svc, .phone, .reel__text > *, .step, .ai, .tile, .cred, .contact__head, .link, .footer > *';
+    let lastRipple = 0;
+    const CHARGE = '.hero__name, .title, .contact__title, .mw, .proj__name, .stat strong, .hero__stats dd';
     addEventListener('robot:shock', (e) => {
       const { x, y } = e.detail;
-      const max = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 80;
+      const VW = document.documentElement.clientWidth;
+      const max = Math.hypot(Math.max(x, VW - x), Math.max(y, innerHeight - y)) + 80;
+      if (!waves.length) sizeShock();
       waves.push({ x, y, t0: performance.now(), max });
       cancelAnimationFrame(shockRaf); shockRaf = requestAnimationFrame(drawShock);
       window.__shock = { x, y, t0: performance.now(), max }; // read by the starfield
+      const now = performance.now();
+      if (now - lastRipple < 280) return;   // a double-click draws two rings but pushes the page once
+      lastRipple = now;
+      $$(CHARGE).forEach((el) => {
+        const b = el.getBoundingClientRect();
+        if (b.bottom < 0 || b.top > innerHeight) return;
+        const d = Math.hypot(b.left + b.width / 2 - x, b.top + b.height / 2 - y);
+        el.animate([
+          { filter: 'brightness(1)' },
+          { filter: 'brightness(1.45) drop-shadow(0 0 14px rgba(214,176,76,.55))', offset: .3 },
+          { filter: 'brightness(1)' },
+        ], { duration: 900, delay: d / SPEED * 1000, easing: 'ease-out' });
+      });
       $$(RIPPLE).forEach((el) => {
         const b = el.getBoundingClientRect();
         if (b.bottom < -40 || b.top > innerHeight + 40 || b.width === 0) return;
@@ -489,18 +505,20 @@
         const dx = (cx - x) / d * amp, dy = (cy - y) / d * amp;
         try {
           el.animate([
-            { transform: 'translate(0, 0) scale(1)' },
-            { transform: `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(1.02)`, offset: .3 },
-            { transform: `translate(${(-dx * .25).toFixed(1)}px, ${(-dy * .25).toFixed(1)}px) scale(.995)`, offset: .65 },
-            { transform: 'translate(0, 0) scale(1)' },
-          ], { duration: 760, delay: d / SPEED * 1000, easing: 'cubic-bezier(.2,.8,.2,1)', composite: 'add' });
+            { translate: '0 0', scale: '1', easing: 'cubic-bezier(.25,.7,.35,1)' },
+            { translate: `${dx.toFixed(1)}px ${dy.toFixed(1)}px`, scale: '1.02', offset: .22, easing: 'cubic-bezier(.45,0,.55,1)' },
+            { translate: `${(-dx * .3).toFixed(1)}px ${(-dy * .3).toFixed(1)}px`, scale: '.995', offset: .6, easing: 'cubic-bezier(.45,0,.55,1)' },
+            { translate: '0 0', scale: '1' },
+          ], { duration: 900, delay: d / SPEED * 1000, easing: 'linear' });
         } catch (err) { /* composite not supported: skip the nudge */ }
         if (el.matches('.proj, .svc, .step, .ai, .tile, .cred, .link, .robot__hud')) {
-          el.animate([
-            { boxShadow: '0 0 0 0 rgba(214,176,76,0)' },
-            { boxShadow: '0 0 0 1px rgba(214,176,76,.9), 0 0 36px -4px rgba(214,176,76,.55)', offset: .25 },
-            { boxShadow: '0 0 0 0 rgba(214,176,76,0)' },
-          ], { duration: 900, delay: d / SPEED * 1000, easing: 'ease-out' });
+          try {
+            el.animate([
+              { boxShadow: '0 0 0 0 rgba(214,176,76,0)' },
+              { boxShadow: '0 0 0 1px rgba(214,176,76,.9), 0 0 36px -4px rgba(214,176,76,.55)', offset: .25 },
+              { boxShadow: '0 0 0 0 rgba(214,176,76,0)' },
+            ], { duration: 900, delay: d / SPEED * 1000, easing: 'ease-out', composite: 'add' });
+          } catch (err) { /* no additive box-shadow: skip the flash */ }
         }
       });
     });

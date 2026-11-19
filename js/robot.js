@@ -221,7 +221,7 @@ function init() {
   const L1 = .58, L2 = .52;
   for (const side of [-1, 1]) {
     const shoulder = new THREE.Group();
-    shoulder.position.set(side * 1.02, -.4, 0);
+    shoulder.position.set(side * 1.06, -.4, 0);
     body.add(shoulder);
     const upper = new THREE.Group(); shoulder.add(upper);
     const uMesh = new THREE.Mesh(new THREE.CapsuleGeometry(.125, L1 - .2, 8, 28), M.shell);
@@ -239,7 +239,7 @@ function init() {
     strip.position.set(0, -L2 * .5, .1); fore.add(strip);
     const wrist = new THREE.Group(); wrist.position.y = -L2; fore.add(wrist);
     const wRing = new THREE.Mesh(new THREE.TorusGeometry(.08, .016, 8, 32), M.gold); wRing.rotation.x = Math.PI / 2; wrist.add(wRing);
-    const hand = new THREE.Group(); wrist.add(hand);
+    const hand = new THREE.Group(); hand.scale.setScalar(1.3); wrist.add(hand);
     const palm = new THREE.Mesh(new THREE.SphereGeometry(1, 28, 18), M.shell); palm.scale.set(.1, .115, .05); palm.position.y = -.1; hand.add(palm);
     const fingers = [];
     for (let f = 0; f < 4; f++) {
@@ -401,39 +401,66 @@ function init() {
 
   /* hologram the robot builds above its palm: app, website, video, brand content */
   const holo = new THREE.Group(); body.add(holo);
-  const holoFill = new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: .16, side: THREE.DoubleSide, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
-  const holoLine = new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: .95, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+  const holoFill = new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: .24, side: THREE.DoubleSide, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+  const holoEdge = new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: .95, side: THREE.DoubleSide, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+  const holoSolid = new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: .9, side: THREE.DoubleSide, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+  const holoBack = new THREE.MeshBasicMaterial({ color: 0x050506, transparent: true, opacity: .62, side: THREE.DoubleSide, depthWrite: false });
   const LAYOUTS = [
-    { name: 'App', frame: [.34, .58], blocks: [[0, .24, .28, .04], [0, .12, .28, .14], [-.07, -.02, .14, .05], [0, -.1, .28, .04], [0, -.17, .28, .04], [0, -.25, .28, .05]] },
-    { name: 'Website', frame: [.64, .42], blocks: [[0, .17, .6, .04], [-.15, .06, .28, .12], [.15, .06, .26, .12], [-.2, -.09, .17, .1], [0, -.09, .17, .1], [.2, -.09, .17, .1], [0, -.17, .2, .03]] },
-    { name: 'AI video', frame: [.62, .38], blocks: [[0, .03, .56, .26], [0, -.15, .56, .02], [-.14, -.15, .28, .025]], tri: true },
-    { name: 'Brand content', frame: [.48, .48], blocks: [[-.15, -.12, .07, .12], [-.05, -.08, .07, .2], [.05, -.03, .07, .3], [.15, .03, .07, .42]], arrow: true },
+    { name: 'App', noun: 'app', scale: 1.55, frame: [.34, .58], blocks: [[0, .24, .28, .04], [0, .12, .28, .14], [-.07, -.02, .14, .05], [0, -.1, .28, .04], [0, -.17, .28, .04], [0, -.25, .28, .05]] },
+    { name: 'Website', noun: 'website', scale: 1.25, frame: [.64, .42], blocks: [[0, .17, .6, .04], [-.15, .06, .28, .12], [.15, .06, .26, .12], [-.2, -.09, .17, .1], [0, -.09, .17, .1], [.2, -.09, .17, .1], [0, -.17, .2, .03]] },
+    { name: 'AI video', noun: 'AI video', scale: 1.25, frame: [.62, .38], blocks: [[0, .03, .56, .26], [0, -.15, .56, .02], [-.14, -.15, .28, .025]], tri: true },
+    { name: 'Brand content', noun: 'brand content', scale: 1.4, frame: [.48, .48], blocks: [[-.15, -.12, .07, .12], [-.05, -.08, .07, .2], [.05, -.03, .07, .3], [.15, .03, .07, .42]], arrow: true },
   ];
-  const rectLine = (w, h) => {
-    const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-w / 2, -h / 2, 0), new THREE.Vector3(w / 2, -h / 2, 0), new THREE.Vector3(w / 2, h / 2, 0), new THREE.Vector3(-w / 2, h / 2, 0), new THREE.Vector3(-w / 2, -h / 2, 0)]);
-    return new THREE.Line(g, holoLine);
+  const TH = .008; // edge thickness in world units: crisp at any pixel ratio (WebGL lines are always 1px)
+  const seg = (ax, ay, bx, by, th = TH) => {
+    const len = Math.hypot(bx - ax, by - ay);
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(len + th, th), holoEdge);
+    m.position.set((ax + bx) / 2, (ay + by) / 2, 0); m.rotation.z = Math.atan2(by - ay, bx - ax);
+    return m;
+  };
+  const rectEdge = (w, h, th = TH) => {
+    const g = new THREE.Group();
+    g.add(seg(-w / 2, -h / 2, w / 2, -h / 2, th), seg(w / 2, -h / 2, w / 2, h / 2, th), seg(w / 2, h / 2, -w / 2, h / 2, th), seg(-w / 2, h / 2, -w / 2, -h / 2, th));
+    return g;
   };
   const builds = LAYOUTS.map((L) => {
     const g = new THREE.Group(); g.visible = false; holo.add(g);
-    const frame = rectLine(L.frame[0], L.frame[1]); g.add(frame);
+    const back = new THREE.Mesh(new THREE.PlaneGeometry(L.frame[0] + .03, L.frame[1] + .03), holoBack);
+    back.position.z = -.012; back.renderOrder = 1; g.add(back);
+    const frame = rectEdge(L.frame[0], L.frame[1], TH * 1.4); frame.renderOrder = 2; g.add(frame);
+    // corner brackets make the screen read as a hologram
+    const cw = .05, fx = L.frame[0] / 2 + .025, fy = L.frame[1] / 2 + .025;
+    [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sy]) => {
+      frame.add(seg(sx * fx, sy * fy, sx * (fx - cw), sy * fy, TH * 1.6), seg(sx * fx, sy * fy, sx * fx, sy * (fy - cw), TH * 1.6));
+    });
     const parts = L.blocks.map(([x, y, w, h]) => {
-      const p = new THREE.Group(); p.position.set(x, y, .01);
-      p.add(new THREE.Mesh(new THREE.PlaneGeometry(w, h), holoFill), rectLine(w, h));
+      const p = new THREE.Group(); p.position.set(x, y, .006);
+      p.add(new THREE.Mesh(new THREE.PlaneGeometry(w, h), holoFill), rectEdge(w, h));
       p.scale.setScalar(.001); g.add(p); return p;
     });
     if (L.tri) {
       const s = new THREE.Shape(); s.moveTo(-.035, -.045); s.lineTo(.055, 0); s.lineTo(-.035, .045); s.closePath();
-      const p = new THREE.Group(); p.position.set(0, .03, .02);
-      p.add(new THREE.Mesh(new THREE.ShapeGeometry(s), new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: .9, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending })));
+      const p = new THREE.Group(); p.position.set(0, .03, .012);
+      p.add(new THREE.Mesh(new THREE.ShapeGeometry(s), holoSolid));
       p.scale.setScalar(.001); g.add(p); parts.push(p);
     }
     if (L.arrow) {
-      const pts = [[-.2, -.14], [-.08, -.02], [.02, -.06], [.19, .17]].map(([x, y]) => new THREE.Vector3(x, y, .02));
-      const p = new THREE.Group(); p.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), holoLine));
+      const pts = [[-.2, -.14], [-.08, -.02], [.02, -.06], [.19, .17]];
+      const p = new THREE.Group(); p.position.z = .012;
+      for (let k = 1; k < pts.length; k++) p.add(seg(pts[k - 1][0], pts[k - 1][1], pts[k][0], pts[k][1], TH * 1.8));
+      const head = new THREE.Shape(); head.moveTo(.19, .17); head.lineTo(.13, .16); head.lineTo(.18, .11); head.closePath();
+      p.add(new THREE.Mesh(new THREE.ShapeGeometry(head), holoSolid));
       p.scale.setScalar(.001); g.add(p); parts.push(p);
     }
     return { g, frame, parts, L };
   });
+  // 'thinking' loader: a spinning arc and three orbiting nodes where the build will appear
+  const loader = new THREE.Group(); loader.visible = false; holo.add(loader);
+  loader.add(new THREE.Mesh(new THREE.RingGeometry(.11, .128, 48, 1, 0, Math.PI * 1.4), holoSolid));
+  const loaderInner = new THREE.Mesh(new THREE.RingGeometry(.06, .07, 40, 1, 0, Math.PI * .9), holoSolid); loader.add(loaderInner);
+  const nodes = [0, 1, 2].map((k) => { const n = new THREE.Mesh(new THREE.CircleGeometry(.018, 16), holoSolid); loader.add(n); return n; });
+  const holoGlow = glow(1.2, 0); holoGlow.material.clippingPlanes = null; holo.add(holoGlow);
+  const holoScan = new THREE.Mesh(new THREE.PlaneGeometry(1, .014), holoSolid); holoScan.position.z = .02; holoScan.visible = false; holo.add(holoScan);
   // light beam from the palm up to the hologram, a spark in the palm, and a scan line across the build
   const beamTex = (() => {
     const c = document.createElement('canvas'); c.width = 4; c.height = 64;
@@ -443,22 +470,33 @@ function init() {
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
   })();
   const beamMat = new THREE.MeshBasicMaterial({ map: beamTex, color: GOLD, transparent: true, opacity: .0, side: THREE.DoubleSide, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
-  const beam = new THREE.Mesh(new THREE.CylinderGeometry(.2, .03, .34, 32, 1, true), beamMat); body.add(beam);
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(.24, .03, 1, 32, 1, true), beamMat); body.add(beam);
+  const beamUp = new THREE.Vector3(0, 1, 0), beamDir = new THREE.Vector3(), beamTop = new THREE.Vector3();
   const palmSpark = glow(.36, 0); palmSpark.material.clippingPlanes = null; body.add(palmSpark);
   const shipSpark = glow(.9, 0); shipSpark.material.clippingPlanes = null; body.add(shipSpark);
   holo.traverse((o) => { o.userData.noWire = true; }); beam.userData.noWire = true;
+  holoSolid.opacity = .9;
   const holoState = { phase: 'idle', t: 0, i: 0 };
   const hudLabel = stage.querySelector('.robot__hud--a b');
   const hudKicker = stage.querySelector('.robot__hud--a span');
+  let hudKey = '';
   function setHud(kicker, label) {
-    if (hudKicker && hudKicker.textContent !== kicker) hudKicker.textContent = kicker;
-    if (hudLabel && hudLabel.dataset.v !== label) { hudLabel.dataset.v = label; hudLabel.innerHTML = '<i class="dot dot--live"></i>' + label; }
+    const key = kicker + '|' + label;
+    if (key === hudKey) return;
+    hudKey = key;
+    if (hudKicker) hudKicker.textContent = kicker;
+    if (hudLabel) hudLabel.innerHTML = '<i class="dot dot--live"></i>' + label;
   }
 
   /* power aura: segmented hologram ring behind the head + click shockwave */
   const auraMat = new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: .55, side: THREE.DoubleSide, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
   const aura = new THREE.Group(); aura.position.set(0, .3, -.7); robot.add(aura);
-  for (let k = 0; k < 36; k++) aura.add(new THREE.Mesh(new THREE.RingGeometry(1.5, 1.56, 4, 1, (k / 36) * Math.PI * 2, (Math.PI * 2 / 36) * .55), auraMat));
+  {
+    const pos = [];
+    for (let k = 0; k < 36; k++) pos.push(...new THREE.RingGeometry(1.5, 1.56, 4, 1, (k / 36) * Math.PI * 2, (Math.PI * 2 / 36) * .55).toNonIndexed().attributes.position.array);
+    const dashes = new THREE.BufferGeometry(); dashes.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    aura.add(new THREE.Mesh(dashes, auraMat));
+  }
   aura.add(new THREE.Mesh(new THREE.RingGeometry(1.38, 1.392, 128), auraMat));
   const auraInner = new THREE.Group(); aura.add(auraInner);
   for (let k = 0; k < 3; k++) auraInner.add(new THREE.Mesh(new THREE.RingGeometry(1.24, 1.27, 48, 1, k * Math.PI * 2 / 3, Math.PI / 3), auraMat));
@@ -494,13 +532,14 @@ function init() {
     const r = stage.getBoundingClientRect();
     S.rect = r;
     S.w = Math.max(1, r.width); S.h = Math.max(1, r.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, matchMedia('(pointer: coarse)').matches ? 1.25 : 1.5));
     renderer.setSize(S.w, S.h, false);
     camera.aspect = S.w / S.h;
     const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     const dist = Math.max(2.05 / t, 1.9 / (t * camera.aspect));
     camera.position.set(0, .2, dist);
     camera.lookAt(0, -.05, 0);
+    S.halfW = t * camera.aspect * (dist - .6);
     camera.updateProjectionMatrix();
     if (S.started && !S.running) requestRender();
   }
@@ -517,8 +556,11 @@ function init() {
     scanMat.color.set(S.light ? 0xb8891f : GOLD); scanMat.blending = blend; scanMat.needsUpdate = true;
     auraMat.blending = blend; auraMat.color.set(S.light ? 0x8a6a12 : GOLD); auraMat.opacity = S.light ? .4 : .55; auraMat.needsUpdate = true;
     shockMat.blending = blend; shockMat.color.set(S.light ? 0x8a6a12 : GOLD); shockMat.needsUpdate = true;
-    [holoFill, holoLine, beamMat].forEach((m) => { m.blending = blend; m.color.set(S.light ? 0x7a5a0c : GOLD); m.needsUpdate = true; });
-    holoFill.opacity = S.light ? .12 : .16;
+    [holoFill, holoEdge, holoSolid].forEach((m) => { m.blending = blend; m.color.set(S.light ? 0x6b4f0a : GOLD); m.needsUpdate = true; });
+    beamMat.blending = blend; beamMat.color.set(S.light ? 0xb8891e : GOLD); beamMat.needsUpdate = true;
+    holoBack.color.set(S.light ? 0xfbf7ee : 0x050506); holoBack.opacity = S.light ? .82 : .62;
+    holoFill.opacity = S.light ? .2 : .24;
+    if (S.light) { palmSpark.userData.k = .8; shipSpark.userData.k = .8; holoGlow.userData.k = .6; }
     renderer.toneMappingExposure = S.light ? 1.15 : 1.05;
     if (S.started && !S.running) requestRender();
   }
@@ -551,17 +593,20 @@ function init() {
     '8,000+ hours with AI since 2022.',
     'Got an idea? Scroll down and let’s build it.',
   ];
+  const touchOnly = matchMedia('(hover: none)').matches;
   function say(i) {
     if (!bubble) return;
-    bubble.textContent = MESSAGES[i % MESSAGES.length];
+    bubble.textContent = i === 0 && touchOnly ? 'Hi! I’m the AI half of this AI Builder. Tap me 👋' : MESSAGES[i % MESSAGES.length];
     bubble.classList.add('is-show');
     placeOverlays();
     clearTimeout(S.bubbleTimer);
     S.bubbleTimer = setTimeout(() => bubble.classList.remove('is-show'), 4200);
   }
   function greet() {
-    if (!S.built) return;
-    S.greetT = 0; S.shockT = 0; S.msg++; say(S.msg); kick();
+    if (!S.built || (S.greetT >= 0 && S.greetT < .6)) return;
+    S.msg++; say(S.msg);
+    if (reduced) { showStill(holoState.i + 1); requestRender(); return; }
+    S.greetT = S.greetT >= 0 ? Math.min(S.greetT, .25) : 0; S.shockT = 0; kick();
     headPivot.getWorldPosition(tmpV); tmpV.y += .3; tmpV.z = 0;
     const o = toStage(tmpV);
     dispatchEvent(new CustomEvent('robot:shock', { detail: { x: S.rect.left + o.x, y: S.rect.top + o.y } }));
@@ -599,8 +644,15 @@ function init() {
     if (reduced) finishBuild();
     kick();
   }
+  function showStill(i) {     // reduced motion: a finished hologram, no animation
+    holoState.i = i % builds.length;
+    builds.forEach((b, k) => { b.g.visible = k === holoState.i; b.g.position.set(0, 0, 0); b.g.scale.setScalar(1); b.frame.scale.set(1, 1, 1); b.parts.forEach((p) => p.scale.set(1, 1, 1)); });
+    beamMat.opacity = .3; palmSpark.material.opacity = .6 * (palmSpark.userData.k || 1);
+    setHud('Built', builds[holoState.i].L.name + ' ✓');
+  }
   function finishBuild() {
     aura.scale.setScalar(1);
+    if (reduced) showStill(0);
     S.built = true;
     setReveal(100);
     wires.forEach((w) => w.parent && w.parent.remove(w));
@@ -623,7 +675,7 @@ function init() {
   let pending = false;
   function requestRender() {
     if (pending || !S.visible || document.hidden) return; pending = true;
-    requestAnimationFrame(() => { pending = false; update(1 / 60); renderer.render(scene, camera); placeOverlays(); });
+    requestAnimationFrame(() => { pending = false; update(reduced ? 0 : 1 / 60); renderer.render(scene, camera); placeOverlays(); });
   }
   let acc = 0;
   function loop() {
@@ -642,20 +694,27 @@ function init() {
   const tmpV = new THREE.Vector3();
   const hudCore = stage.querySelector('.robot__hud--a');
   const hudStack = stage.querySelector('.robot__hud--b');
+  const sizes = new WeakMap();
+  const sizeOf = (el) => sizes.get(el) || [el.offsetWidth, el.offsetHeight];
+  const sizeRO = new ResizeObserver((es) => es.forEach((e) => sizes.set(e.target, [e.target.offsetWidth, e.target.offsetHeight])));
+  [hudCore, hudStack, bubble].forEach((el) => el && sizeRO.observe(el));
   const toStage = (v) => { v.project(camera); return { x: (v.x + 1) / 2 * S.w, y: (1 - v.y) / 2 * S.h }; };
   const last = { core: -1, stack: -1, bx: -1, by: -1 };
   function setTop(el, key, y) {
     if (!el) return;
-    const top = Math.round(y - el.offsetHeight / 2);
+    const top = Math.round(y - sizeOf(el)[1] / 2);
     if (top !== last[key]) { el.style.top = top + 'px'; el.style.bottom = 'auto'; last[key] = top; }
   }
   function placeOverlays() {
-    if (S.w >= 560) {
+    const docked = innerWidth <= 560; // phones: CSS docks the narration chip at the bottom of the stage
+    if (docked && hudCore && last.core !== 'css') { hudCore.style.left = hudCore.style.top = hudCore.style.bottom = ''; last.core = 'css'; last.hx = null; }
+    if (!docked) {
       if (hudCore) {
         holo.getWorldPosition(tmpV); tmpV.y += .42;
         const p = toStage(tmpV);
-        const w = hudCore.offsetWidth, h = hudCore.offsetHeight;
-        const x = Math.round(Math.min(Math.max(p.x - w / 2, 0), S.w - w)), y = Math.round(p.y - h - 6);
+        const [w, h] = sizeOf(hudCore);
+        headPivot.getWorldPosition(tmpV); tmpV.x -= .66; const headL = toStage(tmpV).x;
+        const x = Math.round(Math.max(0, Math.min(p.x - w / 2, S.w - w, headL - w - 8))), y = Math.round(p.y - h - 6);
         if (x !== last.hx || y !== last.core) { hudCore.style.left = x + 'px'; hudCore.style.top = y + 'px'; hudCore.style.bottom = 'auto'; last.hx = x; last.core = y; }
       }
       headPivot.getWorldPosition(tmpV); tmpV.y += .85; setTop(hudStack, 'stack', toStage(tmpV).y); // beside the upper head, above the rings
@@ -665,7 +724,7 @@ function init() {
       const crown = toStage(tmpV);
       headPivot.getWorldPosition(tmpV); tmpV.x += .55; tmpV.y += .55;
       const side = toStage(tmpV);
-      const bw = bubble.offsetWidth, bh = bubble.offsetHeight;
+      const [bw, bh] = sizeOf(bubble);
       const bx = Math.round(Math.min(Math.max(side.x - 6, 8), S.w - bw - 8));
       const minTop = -Math.max(0, (S.rect ? S.rect.top : 0) - 76); // may rise into the hero padding, never under the nav
       const by = Math.round(Math.max(crown.y - bh - 10, minTop));
@@ -704,7 +763,7 @@ function init() {
         THREE.MathUtils.clamp(Math.atan2(S.pointer.x - hx, depth), -.9, .9),
         THREE.MathUtils.clamp(Math.atan2(S.pointer.y - hy, depth), -.5, .4),
       );
-    } else if (S.built && holoState.phase !== 'idle') {
+    } else if (S.built && holoState.phase === 'build') {
       S.lookTarget.set(-.45 + Math.sin(t * .6) * .05, .18);   // look at the hologram in its hand
     } else {
       S.lookTarget.set(Math.sin(t * .45) * .4, Math.sin(t * .31) * .12);
@@ -738,9 +797,9 @@ function init() {
     /* arms: the left hand holds the hologram, the right one rests (and waves on click) */
     const [build, rest] = arms;
     const idleSway = reduced ? 0 : Math.sin(t * 1.3) * .03;
-    build.upper.rotation.set(-.45 + idleSway, 0, -.62);
-    build.fore.rotation.set(-1.75 + idleSway * 1.5, 0, -.3);
-    build.hand.rotation.set(-.5, 0, .25);
+    build.upper.rotation.set(-.4 + idleSway, 0, -.6);
+    build.fore.rotation.set(-1.75 + idleSway * 1.5, 0, -.9);
+    build.hand.rotation.set(-.45, 0, .55);
     const busy = holoState.phase === 'build' ? 1 : 0;
     build.fingers.forEach((f) => {
       const tap = busy ? Math.max(0, Math.sin(t * 16 + f.f * 1.7)) * .35 : 0;
@@ -750,8 +809,9 @@ function init() {
     let wave = 0;
     if (S.greetT >= 0) wave = S.greetT < .25 ? ease(S.greetT / .25) : S.greetT > 1.9 ? Math.max(0, 1 - (S.greetT - 1.9) / .3) : 1;
     const wig = Math.sin((S.greetT >= 0 ? S.greetT : 0) * 14) * .4 * wave;
-    rest.upper.rotation.set(lerp(-.12, -.25, wave), 0, lerp(.2, 2.55, wave));
-    rest.fore.rotation.set(lerp(-.4, -.1, wave), 0, lerp(0, .5, wave) + wig);
+    const arc = Math.sin(wave * Math.PI);
+    rest.upper.rotation.set(lerp(-.2, -.25, wave) - arc * .9, 0, lerp(.3, 2.55, wave));
+    rest.fore.rotation.set(lerp(-1.2, -.1, wave) - Math.sin(wave * Math.PI) * 1.6, 0, lerp(.1, .5, wave) + wig);
     rest.hand.rotation.set(lerp(-.2, 0, wave), lerp(0, -.4, wave), 0);
     rest.fingers.forEach((f) => { f.base.rotation.x = lerp(-.5, -.05, wave); f.knuckle.rotation.x = lerp(-.6, -.1, wave); });
     rest.thumb.rotation.set(-.2, 0, rest.side * lerp(-.6, -1.1, wave));
@@ -760,43 +820,61 @@ function init() {
     /* hologram above the palm: think -> build -> ship, cycling through what Syed builds */
     build.anchor.getWorldPosition(tmpV); body.worldToLocal(tmpV);
     palmSpark.position.copy(tmpV);
-    beam.position.set(tmpV.x, tmpV.y + .17, tmpV.z);
-    holo.position.set(tmpV.x + .1, tmpV.y + .74, tmpV.z + .05);
-    holo.scale.setScalar(1.3);
+    const HB = builds[holoState.i];
+    const hs = HB ? HB.L.scale : 1.3;
+    holo.position.set(tmpV.x + .34, tmpV.y + .26 + (HB ? HB.L.frame[1] / 2 * hs : .35), tmpV.z + .05);
+    if (HB && S.halfW) holo.position.x = Math.max(holo.position.x, -S.halfW + .08 + HB.L.frame[0] / 2 * hs);
+    holo.scale.setScalar(hs);
+    beamTop.set(holo.position.x, holo.position.y - (HB ? HB.L.frame[1] / 2 * hs : .3), holo.position.z);
+    beamDir.subVectors(beamTop, tmpV);
+    const beamLen = Math.max(.05, beamDir.length());
+    beam.position.copy(tmpV).addScaledVector(beamDir, .5);
+    beam.quaternion.setFromUnitVectors(beamUp, beamDir.normalize());
+    beam.scale.set(1, beamLen, 1);
     holo.rotation.set(0, .32 + Math.sin(t * .7) * .08, 0);
     if (S.built && !reduced) {
       const H = holoState; H.t += dt;
       const B = builds[H.i];
       if (H.phase === 'idle') { H.phase = 'think'; H.t = 0; }
       if (H.phase === 'think') {
-        setHud('Thinking', 'Planning the ' + B.L.name.toLowerCase() + '…');
+        setHud('Thinking', 'Planning the ' + B.L.noun + '…');
+        loader.visible = true; loader.rotation.z -= dt * 6; loaderInner.rotation.z += dt * 9;
+        nodes.forEach((n, k) => { const a = t * 3 + k * 2.094; n.position.set(Math.cos(a) * .19, Math.sin(a) * .19, .01); });
+        holoSolid.opacity = .55 + .35 * Math.sin(t * 8);
+        holoGlow.material.opacity = (.18 + .12 * Math.sin(t * 6)) * (holoGlow.userData.k || 1);
         if (H.t < dt * 1.5 && S.scanT < 0) S.scanT = 0;                  // eyes run a loading sweep
         palmSpark.material.opacity = (.4 + .5 * Math.abs(Math.sin(t * 9))) * (palmSpark.userData.k || 1);
         beamMat.opacity = 0;
-        if (H.t > 1.1) { H.phase = 'build'; H.t = 0; builds.forEach((b) => { b.g.visible = false; }); B.g.visible = true; B.g.scale.setScalar(1); B.g.position.set(0, 0, 0); holoLine.opacity = .95; holoFill.opacity = S.light ? .12 : .16; B.parts.forEach((p) => p.scale.setScalar(.001)); }
+        if (H.t > 1.1) { H.phase = 'build'; H.t = 0; builds.forEach((b) => { b.g.visible = false; }); B.g.visible = true; B.g.scale.setScalar(1); B.g.position.set(0, 0, 0); holoEdge.opacity = .95; holoSolid.opacity = .9; holoBack.opacity = S.light ? .82 : .62; holoFill.opacity = S.light ? .2 : .24; loader.visible = false; B.parts.forEach((p) => p.scale.setScalar(.001)); }
       } else if (H.phase === 'build') {
         setHud('Now building', B.L.name);
-        beamMat.opacity = Math.min(.5, H.t * 2) * (S.light ? .5 : 1);
+        beamMat.opacity = Math.min(.5, H.t * 2) * (S.light ? .9 : 1);
+        holoGlow.material.opacity = Math.min(.35, H.t) * (holoGlow.userData.k || 1);
         palmSpark.material.opacity = .9 * (palmSpark.userData.k || 1);
         B.frame.scale.set(1, Math.min(1, H.t / .35), 1);
+        holoScan.visible = true; holoScan.scale.x = B.L.frame[0] + .04;
+        holoScan.position.y = B.L.frame[1] / 2 - ((H.t * .9) % 1) * B.L.frame[1];
         const per = 1.9 / B.parts.length;
         B.parts.forEach((p, k) => { const s = ease((H.t - .35 - k * per) / .28); p.scale.set(Math.max(.001, s), Math.max(.001, s), 1); });
-        if (H.t > 2.45) { H.phase = 'hold'; H.t = 0; }
+        if (H.t > 2.45) { H.phase = 'hold'; H.t = 0; holoScan.visible = false; }
       } else if (H.phase === 'hold') {
         setHud('Built', B.L.name + ' ✓');
-        holoLine.opacity = .7 + .3 * Math.sin(H.t * 12);
-        beamMat.opacity = Math.max(0, .5 - H.t * .5) * (S.light ? .5 : 1);
+        holoEdge.opacity = .7 + .3 * Math.sin(H.t * 12);
+        beamMat.opacity = Math.max(0, .5 - H.t * .5) * (S.light ? .9 : 1);
+        holoGlow.material.opacity = (.3 + .15 * Math.sin(H.t * 12)) * (holoGlow.userData.k || 1);
         if (H.t > 1.1) { H.phase = 'ship'; H.t = 0; }
       } else if (H.phase === 'ship') {
         setHud('Shipped', B.L.name + ' ✓');
+        if (hudCore) hudCore.classList.toggle('is-shipping', H.t < .7);
         const k = ease(H.t / .7);
-        B.g.position.y = k * .9; B.g.scale.setScalar(1 + k * .35);
-        holoLine.opacity = .95 * (1 - k); holoFill.opacity = (S.light ? .12 : .16) * (1 - k);
-        shipSpark.position.set(holo.position.x, holo.position.y + k * .9, holo.position.z);
+        B.g.position.set(0, k * .45, k * .2); B.g.scale.setScalar(1 - k * .3);
+        holoEdge.opacity = .95 * (1 - k); holoSolid.opacity = .9 * (1 - k); holoBack.opacity = (S.light ? .82 : .62) * (1 - k); holoFill.opacity = (S.light ? .2 : .24) * (1 - k);
+        holoGlow.material.opacity = .35 * (1 - k) * (holoGlow.userData.k || 1);
+        B.g.getWorldPosition(tmpV); body.worldToLocal(tmpV); shipSpark.position.copy(tmpV);
         shipSpark.material.opacity = Math.sin(Math.min(1, H.t / .7) * Math.PI) * .9 * (shipSpark.userData.k || 1);
         palmSpark.material.opacity = (1 - k) * .6 * (palmSpark.userData.k || 1);
         beamMat.opacity = 0;
-        if (H.t > .75) { B.g.visible = false; shipSpark.material.opacity = 0; H.i = (H.i + 1) % builds.length; H.phase = 'think'; H.t = 0; }
+        if (H.t > .75) { if (hudCore) hudCore.classList.remove('is-shipping'); B.g.visible = false; shipSpark.material.opacity = 0; H.i = (H.i + 1) % builds.length; H.phase = 'think'; H.t = 0; }
       }
     }
 
@@ -842,9 +920,9 @@ function init() {
     if (S.built) auraMat.opacity = (S.light ? .4 : .55) * (.75 + .25 * Math.sin(t * 1.6)) + happy * .3;
     if (S.shockT >= 0) {
       S.shockT += dt;
-      const k = S.shockT / 1.1;
-      shock.scale.setScalar(1 + k * 2.4);
-      shockMat.opacity = Math.max(0, .9 * (1 - k));
+      const k = Math.min(1, S.shockT / .8);
+      shock.scale.setScalar(1 + k * .85);
+      shockMat.opacity = Math.max(0, .9 * Math.pow(1 - k, 2));
       if (k >= 1) { S.shockT = -1; shockMat.opacity = 0; }
     }
     const pos = pGeo.attributes.position.array;
