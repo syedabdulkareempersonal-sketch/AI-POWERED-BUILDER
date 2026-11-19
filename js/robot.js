@@ -792,7 +792,7 @@ function init() {
       const g = S.greetT;
       tilt = Math.sin(g * 9) * Math.exp(-g * 2.6) * .22;
       happy = g < 1.6 ? ease(g / .2) : Math.max(0, 1 - (g - 1.6) / .3);
-      if (g > 2.2) S.greetT = -1;
+      if (g > 2.6) S.greetT = -1;
     }
     headPivot.rotation.z = tilt;
 
@@ -806,13 +806,14 @@ function init() {
     build.fingers.forEach((f) => { f.base.rotation.set(-.45, 0, (f.f - 1.5) * .05); f.knuckle.rotation.x = -.55; });
     build.thumb.rotation.set(-.3, 0, build.side * -.5);
     let wave = 0;
-    if (S.greetT >= 0) wave = S.greetT < .25 ? ease(S.greetT / .25) : S.greetT > 1.9 ? Math.max(0, 1 - (S.greetT - 1.9) / .3) : 1;
-    const wv = reduced ? 0 : Math.sin(t * (2.4 + wave * 8)) * (.1 + wave * .22);
-    rest.upper.rotation.set(-.15, 0, .78 + wave * .15);
-    rest.fore.rotation.set(-.2, 0, 2.12 + wv * .45);
-    rest.hand.rotation.set(0, 0, wv);
-    rest.fingers.forEach((f) => { f.base.rotation.set(-.08, 0, (f.f - 1.5) * .13); f.knuckle.rotation.x = -.1; });
-    rest.thumb.rotation.set(0, 0, rest.side * -.85);
+    if (S.greetT >= 0) wave = S.greetT < .35 ? ease(S.greetT / .35) : S.greetT > 2.1 ? Math.max(0, 1 - (S.greetT - 2.1) / .45) : 1;
+    // resting: mirrored relaxed arm; on click it lifts, waves an open palm 3-4 times, and lowers again
+    const wv = reduced ? 0 : Math.sin((S.greetT >= 0 ? S.greetT : 0) * 11) * .3 * wave;
+    rest.upper.rotation.set(lerp(-.05, -.15, wave), 0, lerp(.16, .78, wave));
+    rest.fore.rotation.set(lerp(-.3, -.2, wave), 0, lerp(.06, 2.12, wave) + wv * .5);
+    rest.hand.rotation.set(lerp(-.1, 0, wave), 0, wv);
+    rest.fingers.forEach((f) => { f.base.rotation.set(lerp(-.45, -.08, wave), 0, (f.f - 1.5) * lerp(.05, .13, wave)); f.knuckle.rotation.x = lerp(-.55, -.1, wave); });
+    rest.thumb.rotation.set(lerp(-.3, 0, wave), 0, rest.side * lerp(-.5, -.85, wave));
     arms.forEach((a, k) => a.ledMat.color.copy(GOLD).multiplyScalar(.6 + .5 * Math.max(0, Math.sin(t * 3 - k * 1.5)) + wave * .8));
 
     /* hologram above the palm: think -> build -> ship, cycling through what Syed builds */
