@@ -239,19 +239,20 @@ function init() {
     strip.position.set(0, -L2 * .5, .1); fore.add(strip);
     const wrist = new THREE.Group(); wrist.position.y = -L2; fore.add(wrist);
     const wRing = new THREE.Mesh(new THREE.TorusGeometry(.08, .016, 8, 32), M.gold); wRing.rotation.x = Math.PI / 2; wrist.add(wRing);
-    const hand = new THREE.Group(); hand.scale.setScalar(1.3); wrist.add(hand);
-    const palm = new THREE.Mesh(new THREE.SphereGeometry(1, 28, 18), M.shell); palm.scale.set(.1, .115, .05); palm.position.y = -.1; hand.add(palm);
+    const hand = new THREE.Group(); hand.scale.setScalar(1.55); wrist.add(hand);
+    const palm = new THREE.Mesh(new THREE.BoxGeometry(.2, .19, .06, 2, 2, 2), M.metal); palm.position.y = -.11;
+    const knuckles = new THREE.Mesh(new THREE.CapsuleGeometry(.03, .16, 4, 12), M.shell); knuckles.rotation.z = Math.PI / 2; knuckles.position.set(0, -.2, .004); hand.add(knuckles); hand.add(palm);
     const fingers = [];
     for (let f = 0; f < 4; f++) {
-      const base = new THREE.Group(); base.position.set((f - 1.5) * .047, -.195, 0); hand.add(base);
-      const s1 = new THREE.Mesh(new THREE.CapsuleGeometry(.02, .045, 4, 10), M.metal); s1.position.y = -.035; base.add(s1);
-      const knuckle = new THREE.Group(); knuckle.position.y = -.075; base.add(knuckle);
-      const s2 = new THREE.Mesh(new THREE.CapsuleGeometry(.018, .035, 4, 10), M.metal); s2.position.y = -.03; knuckle.add(s2);
-      const tip = new THREE.Mesh(new THREE.SphereGeometry(.013, 10, 8), ledMat); tip.position.y = -.062; knuckle.add(tip);
+      const base = new THREE.Group(); base.position.set((f - 1.5) * .05, -.21, 0); hand.add(base);
+      const s1 = new THREE.Mesh(new THREE.CapsuleGeometry(.021, .07, 4, 10), M.metal); s1.position.y = -.05; base.add(s1);
+      const knuckle = new THREE.Group(); knuckle.position.y = -.105; base.add(knuckle);
+      const s2 = new THREE.Mesh(new THREE.CapsuleGeometry(.019, .055, 4, 10), M.metal); s2.position.y = -.04; knuckle.add(s2);
+      const tip = new THREE.Mesh(new THREE.SphereGeometry(.013, 10, 8), ledMat); tip.position.y = -.08; knuckle.add(tip);
       fingers.push({ base, knuckle, f });
     }
-    const thumb = new THREE.Group(); thumb.position.set(-side * .085, -.08, .015); hand.add(thumb);
-    const tS = new THREE.Mesh(new THREE.CapsuleGeometry(.021, .055, 4, 10), M.metal); tS.position.y = -.045; thumb.add(tS);
+    const thumb = new THREE.Group(); thumb.position.set(-side * .1, -.05, .015); hand.add(thumb);
+    const tS = new THREE.Mesh(new THREE.CapsuleGeometry(.023, .08, 4, 10), M.metal); tS.position.y = -.06; thumb.add(tS);
     const anchor = new THREE.Object3D(); anchor.position.set(0, -.13, .14); hand.add(anchor); // a point just above the palm
     arms.push({ side, shoulder, upper, elbow, fore, wrist, hand, fingers, thumb, anchor, ledMat });
   }
@@ -795,30 +796,24 @@ function init() {
     }
     headPivot.rotation.z = tilt;
 
-    /* arms: the left hand holds the hologram, the right one rests (and waves on click) */
+    /* arms like a humanoid: left arm hangs relaxed, right arm raised with an open palm, waving */
     const [build, rest] = arms;
     const idleSway = reduced ? 0 : Math.sin(t * 1.3) * .03;
-    build.upper.rotation.set(-.2 + idleSway, 0, -.3);
-    build.fore.rotation.set(-1.2 + idleSway, 0, -.1);
-    build.hand.rotation.set(-.2, 0, 0);
-    const busy = holoState.phase === 'build' ? 1 : 0;
-    build.fingers.forEach((f) => {
-      const tap = busy ? Math.max(0, Math.sin(t * 16 + f.f * 1.7)) * .35 : 0;
-      f.base.rotation.x = -.35 - tap; f.knuckle.rotation.x = -.45 - tap * .6;
-    });
-    build.thumb.rotation.set(-.3, 0, build.side * -.9);
+    build.hand.visible = rest.hand.visible = true;
+    build.upper.rotation.set(-.05 + idleSway, 0, -.16);
+    build.fore.rotation.set(-.3, 0, -.06);
+    build.hand.rotation.set(-.1, 0, 0);
+    build.fingers.forEach((f) => { f.base.rotation.set(-.45, 0, (f.f - 1.5) * .05); f.knuckle.rotation.x = -.55; });
+    build.thumb.rotation.set(-.3, 0, build.side * -.5);
     let wave = 0;
     if (S.greetT >= 0) wave = S.greetT < .25 ? ease(S.greetT / .25) : S.greetT > 1.9 ? Math.max(0, 1 - (S.greetT - 1.9) / .3) : 1;
-    const wig = Math.sin((S.greetT >= 0 ? S.greetT : 0) * 14) * .4 * wave;
-    build.hand.visible = false;            // clean silhouette: hands only appear for the wave
-    rest.hand.visible = wave > .05;
-    const arc = Math.sin(wave * Math.PI);
-    rest.upper.rotation.set(lerp(-.2, -.25, wave) - arc * .9, 0, lerp(.3, 2.55, wave));
-    rest.fore.rotation.set(lerp(-1.2, -.1, wave) - Math.sin(wave * Math.PI) * 1.6, 0, lerp(.1, .5, wave) + wig);
-    rest.hand.rotation.set(lerp(-.2, 0, wave), lerp(0, -.4, wave), 0);
-    rest.fingers.forEach((f) => { f.base.rotation.x = lerp(-.5, -.05, wave); f.knuckle.rotation.x = lerp(-.6, -.1, wave); });
-    rest.thumb.rotation.set(-.2, 0, rest.side * lerp(-.6, -1.1, wave));
-    arms.forEach((a, k) => a.ledMat.color.copy(GOLD).multiplyScalar(.6 + .5 * Math.max(0, Math.sin(t * 3 - k * 1.5)) + (k === 0 ? busy * .6 : wave * .8)));
+    const wv = reduced ? 0 : Math.sin(t * (2.4 + wave * 8)) * (.1 + wave * .22);
+    rest.upper.rotation.set(-.15, 0, .78 + wave * .15);
+    rest.fore.rotation.set(-.2, 0, 2.12 + wv * .45);
+    rest.hand.rotation.set(0, 0, wv);
+    rest.fingers.forEach((f) => { f.base.rotation.set(-.08, 0, (f.f - 1.5) * .13); f.knuckle.rotation.x = -.1; });
+    rest.thumb.rotation.set(0, 0, rest.side * -.85);
+    arms.forEach((a, k) => a.ledMat.color.copy(GOLD).multiplyScalar(.6 + .5 * Math.max(0, Math.sin(t * 3 - k * 1.5)) + wave * .8));
 
     /* hologram above the palm: think -> build -> ship, cycling through what Syed builds */
     build.anchor.getWorldPosition(tmpV); body.worldToLocal(tmpV);
