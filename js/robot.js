@@ -1209,7 +1209,7 @@ function init() {
   const hudStack = stage.querySelector('.robot__hud--b');
   const sizes = new WeakMap();
   const sizeOf = (el) => sizes.get(el) || [el.offsetWidth, el.offsetHeight];
-  const sizeRO = new ResizeObserver((es) => es.forEach((e) => sizes.set(e.target, [e.target.offsetWidth, e.target.offsetHeight])));
+  const sizeRO = new ResizeObserver((es) => { es.forEach((e) => sizes.set(e.target, [e.target.offsetWidth, e.target.offsetHeight])); if (!S.running) placeOverlays(); });   // still robot: re-place now
   [hudStack, bubble].forEach((el) => el && sizeRO.observe(el));
   const scrA = { x: 0, y: 0 }, scrB = { x: 0, y: 0 };
   const toStage = (v, out) => { v.project(camera); out.x = (v.x + 1) / 2 * S.w; out.y = (1 - v.y) / 2 * S.h; return out; };
