@@ -359,6 +359,17 @@ function init() {
   const particles = new THREE.Points(pGeo, pMat);
   robot.add(particles);
 
+  /* power aura: segmented hologram ring behind the head + click shockwave */
+  const auraMat = new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: .55, side: THREE.DoubleSide, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+  const aura = new THREE.Group(); aura.position.set(0, .3, -.7); robot.add(aura);
+  for (let k = 0; k < 36; k++) aura.add(new THREE.Mesh(new THREE.RingGeometry(1.5, 1.56, 4, 1, (k / 36) * Math.PI * 2, (Math.PI * 2 / 36) * .55), auraMat));
+  aura.add(new THREE.Mesh(new THREE.RingGeometry(1.38, 1.392, 128), auraMat));
+  const auraInner = new THREE.Group(); aura.add(auraInner);
+  for (let k = 0; k < 3; k++) auraInner.add(new THREE.Mesh(new THREE.RingGeometry(1.24, 1.27, 48, 1, k * Math.PI * 2 / 3, Math.PI / 3), auraMat));
+  aura.scale.setScalar(.001);
+  const shockMat = new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+  const shock = new THREE.Mesh(new THREE.RingGeometry(.96, 1, 128), shockMat); shock.position.copy(aura.position); robot.add(shock);
+
   /* ================================================ BUILD-IN WIREFRAME */
   const wireMat = new THREE.MeshBasicMaterial({ color: GOLD, wireframe: true, transparent: true, opacity: .07, depthWrite: false, toneMapped: false, clippingPlanes: [wireClip] });
   const wires = [];
@@ -379,7 +390,7 @@ function init() {
     look: new THREE.Vector2(0, 0), lookTarget: new THREE.Vector2(0, 0),
     pointer: { x: 0, y: 0, inside: false, touchAt: -10 }, rect: null,
     nextBlink: 2.5, blinkT: -1, nextScan: 6, scanT: -1,
-    greetT: -1, msg: 0, bubbleTimer: 0,
+    greetT: -1, shockT: -1, msg: 0, bubbleTimer: 0,
     scroll: 0, light: root.dataset.theme === 'light',
   };
 
@@ -408,6 +419,8 @@ function init() {
     wireMat.color.set(S.light ? 0x6b4f0a : GOLD);
     glows.forEach((g) => { g.material.blending = blend; g.material.color.set(S.light ? 0xb8891e : GOLD); g.userData.k = S.light ? .45 : 1; g.material.opacity = g.userData.baseOpacity * g.userData.k; g.material.needsUpdate = true; });
     scanMat.color.set(S.light ? 0xb8891f : GOLD); scanMat.blending = blend; scanMat.needsUpdate = true;
+    auraMat.blending = blend; auraMat.color.set(S.light ? 0x8a6a12 : GOLD); auraMat.opacity = S.light ? .4 : .55; auraMat.needsUpdate = true;
+    shockMat.blending = blend; shockMat.color.set(S.light ? 0x8a6a12 : GOLD); shockMat.needsUpdate = true;
     renderer.toneMappingExposure = S.light ? 1.15 : 1.05;
     if (S.started && !S.running) requestRender();
   }
@@ -450,7 +463,7 @@ function init() {
   }
   function greet() {
     if (!S.built) return;
-    S.greetT = 0; S.msg++; say(S.msg); kick();
+    S.greetT = 0; S.shockT = 0; S.msg++; say(S.msg); kick();
     if (reduced) requestRender();
   }
   const ray = new THREE.Raycaster();
@@ -486,6 +499,7 @@ function init() {
     kick();
   }
   function finishBuild() {
+    aura.scale.setScalar(1);
     S.built = true;
     setReveal(100);
     wires.forEach((w) => w.parent && w.parent.remove(w));
@@ -565,6 +579,7 @@ function init() {
       eyes[0].getWorldPosition(eyeWorld);
       const lit = ease((c - eyeWorld.y) / .5);
       eyes.forEach((e) => e.userData.dots.forEach((d) => d.userData.mat.color.copy(GOLD).multiplyScalar(lit)));
+      aura.scale.setScalar(Math.max(.001, ease((S.buildT - 2) / .7)));
       rings.forEach((r, k) => r.pivot.scale.setScalar(Math.max(.001, ease((S.buildT - 1.7 - k * .15) / .8))));
       if (S.buildT > BUILD + .45) finishBuild();
     }
@@ -647,6 +662,16 @@ function init() {
     /* rings + particles */
     rings.forEach((r) => { r.spinner.rotation.z += dt * r.speed * (1 + happy * 4); });
     halo.rotation.y = t * .08;
+    aura.rotation.z -= dt * .18 * (1 + happy * 6);
+    auraInner.rotation.z += dt * .6 * (1 + happy * 3);
+    if (S.built) auraMat.opacity = (S.light ? .4 : .55) * (.75 + .25 * Math.sin(t * 1.6)) + happy * .3;
+    if (S.shockT >= 0) {
+      S.shockT += dt;
+      const k = S.shockT / 1.1;
+      shock.scale.setScalar(1 + k * 2.4);
+      shockMat.opacity = Math.max(0, .9 * (1 - k));
+      if (k >= 1) { S.shockT = -1; shockMat.opacity = 0; }
+    }
     const pos = pGeo.attributes.position.array;
     for (let i = 0; i < P; i++) {
       pos[i * 3 + 1] += pSpeed[i] * dt;

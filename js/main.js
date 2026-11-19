@@ -55,8 +55,7 @@
       <div class="proj__stage">
         <span class="proj__idx">${pad(i + 1)}</span>
         <span class="proj__tag">${p.url ? 'Live' : 'Built with AI'}</span>
-        ${p.shots ? `<div class="proj__shots">${p.shots.map((s, k) => `<img src="${s}" alt="${esc(p.name)} screen ${k + 1}" loading="lazy">`).join('')}</div>`
-          : `<div class="proj__plate"><img src="${p.logo}" alt="${esc(p.name)} logo" loading="lazy"></div>`}
+        <div class="proj__plate"><img src="${p.logo}" alt="${esc(p.name)} logo" loading="lazy"></div>
       </div>
       <div class="proj__body">
         <p class="proj__kind">${esc(p.kind)}</p>
@@ -80,7 +79,7 @@
     $('#caseStatus').innerHTML = p.url ? `<a href="${p.url}" target="_blank" rel="noopener">Visit live ↗</a>` : 'Built with AI · live link coming soon';
     $('#caseDesc').textContent = p.desc;
     $('#caseFeatures').innerHTML = p.tags.map((t) => `<li>${esc(t)}</li>`).join('');
-    $('#caseShots').innerHTML = (p.shots || []).map((s, k) => `<img src="${s}" alt="${esc(p.name)} screen ${k + 1}" loading="lazy">`).join('');
+    $('#caseShots').innerHTML = (p.shots || []).map((s, k) => `<figure style="--k:${k}"><img src="${s}" alt="${esc(p.name)} screen ${k + 1}" loading="lazy"></figure>`).join('');
     $('#caseCount').textContent = `${pad(current + 1)} / ${pad(PROJECTS.length)}`;
   }
   function openCase(i) {
