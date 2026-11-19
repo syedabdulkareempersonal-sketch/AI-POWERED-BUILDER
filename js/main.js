@@ -428,7 +428,7 @@
 
   /* ---------- Robot safety net: if the 3D view never comes alive, keep the still image ---------- */
   const robotStage = $('#robotStage');
-  setTimeout(() => { if (robotStage && !robotStage.classList.contains('is-live')) { robotStage.classList.add('is-fallback'); robotStage.setAttribute('aria-label', 'AI robot illustration'); } }, 9000);
+  setTimeout(() => { if (robotStage && !robotStage.classList.contains('is-live')) { robotStage.dataset.liveLabel = robotStage.getAttribute('aria-label'); robotStage.classList.add('is-fallback'); robotStage.setAttribute('aria-label', 'AI robot illustration'); } }, 9000);
 
   /* ---------- Robot shockwave: rolls out from the robot across the whole page ---------- */
   const shockCanvas = $('#shock');

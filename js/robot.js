@@ -412,11 +412,14 @@ function init() {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(28, 1, .1, 60);
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const envWarm = pmrem.fromScene(studio(false), .03).texture;
-  const envCool = pmrem.fromScene(studio(true), .03).texture;
+  const makeEnvs = () => {
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const env = [pmrem.fromScene(studio(false), .03).texture, pmrem.fromScene(studio(true), .03).texture];
+    pmrem.dispose();
+    return env;
+  };
+  let [envWarm, envCool] = makeEnvs();
   scene.environment = envWarm;
-  pmrem.dispose();
 
   const key = new THREE.DirectionalLight(0xffffff, 1.4); key.position.set(-3, 4, 5);
   const rimLight = new THREE.DirectionalLight(0xffc35a, 3.2); rimLight.position.set(4, 2.5, -3);
@@ -1102,6 +1105,7 @@ function init() {
     if (!bubble) return;
     bubble.textContent = i === 0 && touchOnly ? 'Hi! I’m the AI half of this AI Builder. Tap me 👋' : MESSAGES[i % MESSAGES.length];
     bubble.classList.add('is-show');
+    sizes.set(bubble, [bubble.offsetWidth, bubble.offsetHeight]);   // place it with the new message's size, not the last one's
     placeOverlays();
     clearTimeout(S.bubbleTimer);
     S.bubbleTimer = setTimeout(() => bubble.classList.remove('is-show'), 4200);
@@ -1111,7 +1115,10 @@ function init() {
     if (!S.built || (S.greetT >= 0 && S.greetT < .6)) return;
     S.msg++; say(S.msg);
     if (reduced) { showStill(holoState.i + 1); requestRender(); return; }
-    S.greetT = S.greetT >= 0 ? Math.min(S.greetT, .25) : 0; S.shockT = 0; kick();
+    // waving again: re-enter the wave where the arm already is (same height, same swing phase), so the hand never jumps
+    const g = S.greetT, SWING = 2 * Math.PI / 12.5;
+    S.greetT = g < 0 || g > 2.55 ? 0 : g > 2.05 ? .45 * (1 - (g - 2.05) / .5) : .45 + ((g - .45) % SWING);
+    S.shockT = 0; kick();
     headPivot.getWorldPosition(tmpV); tmpV.y += VISOR_Y; tmpV.z = 0;
     const o = toStage(tmpV, scrA);
     dispatchEvent(new CustomEvent('robot:shock', { detail: { x: S.rect.left + o.x, y: S.rect.top + o.y } }));
@@ -1123,7 +1130,8 @@ function init() {
     const r = canvas.getBoundingClientRect();
     ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, camera);
-    return ray.intersectObjects(hitTargets, false).length > 0;
+    // only what is drawn counts: on phones nothing below the docked hologram card is (floorClip)
+    return ray.intersectObjects(hitTargets, false).some((h) => floorClip.distanceToPoint(h.point) >= 0);
   }
   canvas.addEventListener('click', (e) => { if (hits(e)) greet(); });
   let hoverQueued = false;
@@ -1161,7 +1169,7 @@ function init() {
     wires.forEach((w) => w.parent && w.parent.remove(w));
     scanMat.opacity = 0;
     rings.forEach((r) => r.pivot.scale.setScalar(1));
-    setTimeout(() => say(0), reduced ? 0 : 500);
+    S.helloT = setTimeout(() => { if (!S.msg) say(0); }, reduced ? 0 : 500);   // unless a click already greeted
   }
   setReveal(REVEAL_FROM);
 
@@ -1184,7 +1192,7 @@ function init() {
     if (!S.running) return;
     raf = requestAnimationFrame(loop);
     acc += clock.getDelta();
-    if (acc < 1 / 62) return;              // no point drawing faster than 60 fps
+    if (acc < .0095) return;               // skip frames only on 120 Hz+ screens; every 60-100 Hz frame is drawn
     const dt = Math.min(acc, .05); acc = 0;
     update(dt);
     renderer.render(scene, camera);
@@ -1444,6 +1452,18 @@ function init() {
   update(0);
   renderer.render(scene, camera);
   stage.classList.add('is-live');
+  if (stage.classList.contains('is-fallback')) {   // three.js arrived after main.js gave up waiting: undo the poster state
+    stage.classList.remove('is-fallback');
+    if (stage.dataset.liveLabel) stage.setAttribute('aria-label', stage.dataset.liveLabel);
+  }
+  // a lost and restored GPU context drops the studio reflections: rebuild them and redraw
+  canvas.addEventListener('webglcontextrestored', () => {
+    [envWarm, envCool] = makeEnvs();
+    scene.environment = envWarm;
+    M.limb.envMap = envCool; M.hand.envMap = envCool;
+    M.limb.needsUpdate = M.hand.needsUpdate = true;
+    if (!S.running) requestRender();
+  });
   if (window.__siteReady) start();
   else addEventListener('site:ready', start, { once: true });
   setTimeout(start, 7000);
