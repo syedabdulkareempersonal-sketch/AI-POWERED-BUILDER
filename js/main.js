@@ -36,10 +36,11 @@
     },
     {
       name: 'Kadapa Cars',
-      kind: 'Website',
-      logo: 'assets/img/kadapa-cars-logo.webp', plate: '#ffffff', brand: '#2557d6',
-      desc: 'A website I built with AI.',
-      tags: ['Website', 'Built with AI'],
+      kind: 'Car rental website · Live',
+      logo: 'assets/img/kadapa-cars-logo.webp', plate: '#ffffff', brand: '#5b4bff',
+      desc: 'A self-drive car rental website for Kadapa. Visitors explore the 7-seater Maruti Suzuki Ertiga in a 9-image gallery, choose self-drive or a trip with a driver, pick collection and return dates, and book in one tap on WhatsApp, with no app or sign-up.',
+      tags: ['Self-drive rentals', 'With-driver trips', 'Date & time booking', 'WhatsApp booking', '9-image car gallery', 'Mobile-first, no sign-up'],
+      shots: ['assets/img/kadapa-shot-1.webp', 'assets/img/kadapa-shot-2.webp', 'assets/img/kadapa-shot-3.webp'],
       url: 'https://kadapacars.com/',
     },
   ];
@@ -54,7 +55,8 @@
       <div class="proj__stage">
         <span class="proj__idx">${pad(i + 1)}</span>
         <span class="proj__tag">${p.url ? 'Live' : 'Built with AI'}</span>
-        <div class="proj__plate"><img src="${p.logo}" alt="${esc(p.name)} logo" loading="lazy"></div>
+        ${p.shots ? `<div class="proj__shots">${p.shots.map((s, k) => `<img src="${s}" alt="${esc(p.name)} screen ${k + 1}" loading="lazy">`).join('')}</div>`
+          : `<div class="proj__plate"><img src="${p.logo}" alt="${esc(p.name)} logo" loading="lazy"></div>`}
       </div>
       <div class="proj__body">
         <p class="proj__kind">${esc(p.kind)}</p>
@@ -78,6 +80,7 @@
     $('#caseStatus').innerHTML = p.url ? `<a href="${p.url}" target="_blank" rel="noopener">Visit live ↗</a>` : 'Built with AI · live link coming soon';
     $('#caseDesc').textContent = p.desc;
     $('#caseFeatures').innerHTML = p.tags.map((t) => `<li>${esc(t)}</li>`).join('');
+    $('#caseShots').innerHTML = (p.shots || []).map((s, k) => `<img src="${s}" alt="${esc(p.name)} screen ${k + 1}" loading="lazy">`).join('');
     $('#caseCount').textContent = `${pad(current + 1)} / ${pad(PROJECTS.length)}`;
   }
   function openCase(i) {
