@@ -383,10 +383,21 @@
         s.y -= .05 * s.z;
         if (s.y < -4) s.y = h + 4;
         const y = ((s.y - sy * .08 * s.z) % h + h) % h;
+        let px = s.x, py = y, boostA = 0;
+        const W = window.__shock;
+        if (W) {
+          const r = (performance.now() - W.t0) / 1000 * 1100;
+          if (r > W.max) window.__shock = null;
+          else {
+            const ddx = s.x - W.x, ddy = y - W.y, dd = Math.hypot(ddx, ddy) || 1;
+            const band = Math.exp(-Math.pow((dd - r) / 70, 2));
+            px += ddx / dd * band * 28; py += ddy / dd * band * 28; boostA = band;
+          }
+        }
         const a = (.35 + .65 * Math.abs(Math.sin(t * .8 + s.tw))) * (light ? .45 : .75) * s.z;
         if (light && !s.gold) continue;
         ctx.fillStyle = s.gold ? (light ? `rgba(124,92,14,${a * .5})` : `rgba(232,197,90,${a})`) : `rgba(255,255,255,${a * .65})`;
-        ctx.beginPath(); ctx.arc(s.x, y, s.r, 0, 6.283); ctx.fill();
+        ctx.beginPath(); ctx.arc(px, py, s.r * (1 + boostA * 1.6), 0, 6.283); ctx.fill();
       }
       if (mouse.active) {
         const dx = mouse.x - mouse.px, dy = mouse.y - mouse.py, speed = Math.hypot(dx, dy);
@@ -418,6 +429,82 @@
   /* ---------- Robot safety net: if the 3D view never comes alive, keep the still image ---------- */
   const robotStage = $('#robotStage');
   setTimeout(() => { if (robotStage && !robotStage.classList.contains('is-live')) { robotStage.classList.add('is-fallback'); robotStage.setAttribute('aria-label', 'AI robot illustration'); } }, 9000);
+
+  /* ---------- Robot shockwave: rolls out from the robot across the whole page ---------- */
+  const shockCanvas = $('#shock');
+  if (shockCanvas && !reduced) {
+    const sx = shockCanvas.getContext('2d');
+    const waves = [];
+    let shockRaf = 0;
+    const SPEED = 1100; // px per second
+    const sizeShock = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      shockCanvas.width = innerWidth * dpr; shockCanvas.height = innerHeight * dpr;
+      sx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    sizeShock();
+    addEventListener('resize', sizeShock);
+
+    const drawShock = (now) => {
+      sx.clearRect(0, 0, innerWidth, innerHeight);
+      const light = root.dataset.theme === 'light';
+      const rgb = light ? '138,101,12' : '232,197,90';
+      for (let i = waves.length - 1; i >= 0; i--) {
+        const w = waves[i];
+        const r = (now - w.t0) / 1000 * SPEED;
+        const fade = Math.max(0, 1 - r / w.max);
+        if (fade <= 0) { waves.splice(i, 1); continue; }
+        // a soft flash at the origin, then a bright ring with a wide glowing wake
+        if (r < 260) {
+          const f = sx.createRadialGradient(w.x, w.y, 0, w.x, w.y, 260);
+          f.addColorStop(0, `rgba(${rgb},${.35 * (1 - r / 260)})`); f.addColorStop(1, `rgba(${rgb},0)`);
+          sx.fillStyle = f; sx.beginPath(); sx.arc(w.x, w.y, 260, 0, 6.283); sx.fill();
+        }
+        [[46, .07], [22, .14], [9, .3], [2.5, .9]].forEach(([lw, a]) => {
+          sx.strokeStyle = `rgba(${rgb},${a * fade})`; sx.lineWidth = lw;
+          sx.beginPath(); sx.arc(w.x, w.y, r, 0, 6.283); sx.stroke();
+        });
+        const r2 = r * .72;  // a second, fainter echo ring behind the first
+        sx.strokeStyle = `rgba(${rgb},${.35 * fade})`; sx.lineWidth = 1.5;
+        sx.beginPath(); sx.arc(w.x, w.y, r2, 0, 6.283); sx.stroke();
+      }
+      if (waves.length) shockRaf = requestAnimationFrame(drawShock);
+      else sx.clearRect(0, 0, innerWidth, innerHeight);
+    };
+
+    // everything on screen gets pushed outward as the wave front passes it
+    const RIPPLE = '.nav, .hero__copy > *, .robot__hud, .marquee__row, .shead, .about__photo, .about__text > *, .journey li, .proj, .svc, .phone, .reel__text > *, .step, .ai, .tile, .cred, .contact__head, .link, .footer > *';
+    addEventListener('robot:shock', (e) => {
+      const { x, y } = e.detail;
+      const max = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 80;
+      waves.push({ x, y, t0: performance.now(), max });
+      cancelAnimationFrame(shockRaf); shockRaf = requestAnimationFrame(drawShock);
+      window.__shock = { x, y, t0: performance.now(), max }; // read by the starfield
+      $$(RIPPLE).forEach((el) => {
+        const b = el.getBoundingClientRect();
+        if (b.bottom < -40 || b.top > innerHeight + 40 || b.width === 0) return;
+        const cx = b.left + b.width / 2, cy = b.top + b.height / 2;
+        const d = Math.max(1, Math.hypot(cx - x, cy - y));
+        const amp = 16 * Math.max(.3, 1 - d / 1600);
+        const dx = (cx - x) / d * amp, dy = (cy - y) / d * amp;
+        try {
+          el.animate([
+            { transform: 'translate(0, 0) scale(1)' },
+            { transform: `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(1.02)`, offset: .3 },
+            { transform: `translate(${(-dx * .25).toFixed(1)}px, ${(-dy * .25).toFixed(1)}px) scale(.995)`, offset: .65 },
+            { transform: 'translate(0, 0) scale(1)' },
+          ], { duration: 760, delay: d / SPEED * 1000, easing: 'cubic-bezier(.2,.8,.2,1)', composite: 'add' });
+        } catch (err) { /* composite not supported: skip the nudge */ }
+        if (el.matches('.proj, .svc, .step, .ai, .tile, .cred, .link, .robot__hud')) {
+          el.animate([
+            { boxShadow: '0 0 0 0 rgba(214,176,76,0)' },
+            { boxShadow: '0 0 0 1px rgba(214,176,76,.9), 0 0 36px -4px rgba(214,176,76,.55)', offset: .25 },
+            { boxShadow: '0 0 0 0 rgba(214,176,76,0)' },
+          ], { duration: 900, delay: d / SPEED * 1000, easing: 'ease-out' });
+        }
+      });
+    });
+  }
 
   root.classList.add('js-ready'); // everything above ran: cancel the CSS failsafes
 })();
