@@ -476,16 +476,17 @@ function init() {
   const shipSpark = glow(.9, 0); shipSpark.material.clippingPlanes = null; body.add(shipSpark);
   holo.traverse((o) => { o.userData.noWire = true; }); beam.userData.noWire = true;
   holoSolid.opacity = .9;
+  holo.visible = false; beam.visible = false; palmSpark.visible = false; shipSpark.visible = false; // the hologram is drawn in HTML now
   const holoState = { phase: 'idle', t: 0, i: 0 };
-  const hudLabel = stage.querySelector('.robot__hud--a b');
-  const hudKicker = stage.querySelector('.robot__hud--a span');
+  const hudLabel = stage.querySelector('.holo__label');
+  const hudKicker = stage.querySelector('.holo__kicker');
   let hudKey = '';
   function setHud(kicker, label) {
     const key = kicker + '|' + label;
     if (key === hudKey) return;
     hudKey = key;
     if (hudKicker) hudKicker.textContent = kicker;
-    if (hudLabel) hudLabel.innerHTML = '<i class="dot dot--live"></i>' + label;
+    if (hudLabel) hudLabel.textContent = label;
   }
 
   /* power aura: segmented hologram ring behind the head + click shockwave */
@@ -692,7 +693,7 @@ function init() {
   const eyeWorld = new THREE.Vector3();
   const headWorld = new THREE.Vector3();
   const tmpV = new THREE.Vector3();
-  const hudCore = stage.querySelector('.robot__hud--a');
+  const hudCore = null; // narration lives in the HTML hologram panel
   const hudStack = stage.querySelector('.robot__hud--b');
   const sizes = new WeakMap();
   const sizeOf = (el) => sizes.get(el) || [el.offsetWidth, el.offsetHeight];
@@ -797,9 +798,9 @@ function init() {
     /* arms: the left hand holds the hologram, the right one rests (and waves on click) */
     const [build, rest] = arms;
     const idleSway = reduced ? 0 : Math.sin(t * 1.3) * .03;
-    build.upper.rotation.set(-.4 + idleSway, 0, -.6);
-    build.fore.rotation.set(-1.75 + idleSway * 1.5, 0, -.9);
-    build.hand.rotation.set(-.45, 0, .55);
+    build.upper.rotation.set(-.2 + idleSway, 0, -.3);
+    build.fore.rotation.set(-1.2 + idleSway, 0, -.1);
+    build.hand.rotation.set(-.2, 0, 0);
     const busy = holoState.phase === 'build' ? 1 : 0;
     build.fingers.forEach((f) => {
       const tap = busy ? Math.max(0, Math.sin(t * 16 + f.f * 1.7)) * .35 : 0;
@@ -809,6 +810,8 @@ function init() {
     let wave = 0;
     if (S.greetT >= 0) wave = S.greetT < .25 ? ease(S.greetT / .25) : S.greetT > 1.9 ? Math.max(0, 1 - (S.greetT - 1.9) / .3) : 1;
     const wig = Math.sin((S.greetT >= 0 ? S.greetT : 0) * 14) * .4 * wave;
+    build.hand.visible = false;            // clean silhouette: hands only appear for the wave
+    rest.hand.visible = wave > .05;
     const arc = Math.sin(wave * Math.PI);
     rest.upper.rotation.set(lerp(-.2, -.25, wave) - arc * .9, 0, lerp(.3, 2.55, wave));
     rest.fore.rotation.set(lerp(-1.2, -.1, wave) - Math.sin(wave * Math.PI) * 1.6, 0, lerp(.1, .5, wave) + wig);
@@ -877,6 +880,9 @@ function init() {
         if (H.t > .75) { if (hudCore) hudCore.classList.remove('is-shipping'); B.g.visible = false; shipSpark.material.opacity = 0; H.i = (H.i + 1) % builds.length; H.phase = 'think'; H.t = 0; }
       }
     }
+
+    if (stage.dataset.phase !== holoState.phase) stage.dataset.phase = holoState.phase;
+    if (stage.dataset.build !== String(holoState.i)) stage.dataset.build = String(holoState.i);
 
     /* blink */
     if (t > S.nextBlink && S.blinkT < 0 && S.built) { S.blinkT = 0; S.nextBlink = t + 2.6 + Math.random() * 3.4; }
