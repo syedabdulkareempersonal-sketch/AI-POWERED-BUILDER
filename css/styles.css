@@ -702,7 +702,7 @@ html:has(dialog[open]) { overflow: hidden; }
 
 /* placement: in the free space beside the robot, never over the hero text */
 @media (max-width: 1366px) { .holo { left: -40px; width: 200px; } }
-@media (min-width: 901px) and (max-width: 1180px) { .holo { left: -24px; top: 2%; width: 176px; padding: 10px; } }
+@media (min-width: 901px) and (max-width: 1180px) { .holo { left: -52px; top: 2%; width: 176px; padding: 10px; } }   /* clear of the robot's ring, still well clear of the hero text */
 @media (max-width: 900px) { .holo { left: 3%; top: 3%; width: 176px; padding: 10px; } }
 /* phones: a compact horizontal card docked in the faded strip under the robot */
 @media (max-width: 560px) {

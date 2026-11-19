@@ -450,7 +450,7 @@
       const rgb = light ? '138,101,12' : '232,197,90';
       for (let i = waves.length - 1; i >= 0; i--) {
         const w = waves[i];
-        const r = (now - w.t0) / 1000 * SPEED;
+        const r = Math.max(0, now - w.t0) / 1000 * SPEED;   // a frame can be stamped just before the click
         const fade = Math.max(0, Math.min(1, (w.max - r) / 320)) * (1 - .3 * r / w.max);
         if (fade <= 0) { waves.splice(i, 1); continue; }
         // a soft flash at the origin, then a bright ring with a wide glowing wake
