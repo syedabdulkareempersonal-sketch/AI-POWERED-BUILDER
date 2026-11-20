@@ -1026,10 +1026,14 @@ function init() {
     const handsPx = dock ? dock - 10 : S.h * (S.phone ? .74 : .73);
     // headroom: where the stage starts close under the nav, leave room above the aura for the speech bubble
     // (two lines, three on phones), less the drop of the aura's arc under the bubble's left edge
-    const above = hasNav ? r.top + scrollY - 76 : 1e4, need = (S.phone ? 85 : 65) + 18;
     // the hologram panel, where it sits beside the robot (desktop layouts): the shoulders must pass below it
     const side = !S.phone && holoEl && holoEl.offsetParent === stage;
     const hR = side ? holoEl.offsetLeft + holoEl.offsetWidth : 0, hB = side ? holoEl.offsetTop + holoEl.offsetHeight : 0;
+    // ...and the speech bubble stays to the right of it, wrapping onto a third line where the stage is narrow
+    S.bubMinX = side ? hR + 10 : 8;
+    const bubW = side ? Math.min(300, S.w - S.bubMinX - 8) : 300;
+    if (bubble) bubble.style.maxWidth = side ? bubW + 'px' : '';
+    const above = hasNav ? r.top + scrollY - 76 : 1e4, need = (S.phone || bubW < 300 ? 85 : 65) + 18;
     let topPx = S.h * .015, ppu = 1;
     for (let k = 0; k < 4; k++) {
       ppu = Math.min((handsPx - topPx) / (TOP - HANDS), S.w / (S.phone ? 2.9 : 3.0));   // pixels per world unit, never wider than the stage
@@ -1088,6 +1092,7 @@ function init() {
   addEventListener('scroll', () => {
     S.scroll = Math.min(scrollY / innerHeight, 1.2);
     S.rect = stage.getBoundingClientRect();
+    if (!S.running && bubble && bubble.classList.contains('is-show')) placeOverlays();   // still robot: keep the bubble clear of the nav
   }, { passive: true });
 
   new IntersectionObserver(([en]) => { S.visible = en.isIntersecting; kick(); if (S.visible && reduced) requestRender(); }, { threshold: 0 }).observe(stage);
@@ -1225,7 +1230,7 @@ function init() {
     if (bubble && bubble.classList.contains('is-show')) {
       const [bw, bh] = sizeOf(bubble);
       headPivot.getWorldPosition(tmpV); tmpV.x += .3;
-      const bx = Math.round(Math.min(Math.max(toStage(tmpV, scrA).x - 6, 8), S.w - bw - 8));
+      const bx = Math.round(Math.min(Math.max(toStage(tmpV, scrA).x - 6, S.bubMinX || 8), S.w - bw - 8));
       // the bubble sits above the crown, and its bottom clears whatever lies under it: the aura ring, the antenna tip
       headPivot.getWorldPosition(tmpV); tmpV.y += .72;
       let top = toStage(tmpV, scrA).y;
@@ -1239,7 +1244,7 @@ function init() {
       auraHolder.getWorldPosition(tmpV); tmpV.y += R;
       const ry = c.y - toStage(tmpV, scrB).y, nx = Math.min(Math.max(c.x, bx), bx + bw), dx = (nx - c.x) / rx;
       if (Math.abs(dx) < 1) top = Math.min(top, c.y - ry * Math.sqrt(1 - dx * dx) - 3);
-      const minTop = -Math.max(0, (S.rect ? S.rect.top : 0) - 76); // may rise into the hero padding, never under the nav
+      const minTop = 76 - (S.rect ? S.rect.top : 0); // may rise into the hero padding, never under the nav (also after a scroll)
       const by = Math.round(Math.max(top - bh - 10, minTop));
       if (bx !== last.bx || by !== last.by) { bubble.style.left = bx + 'px'; bubble.style.right = 'auto'; bubble.style.top = by + 'px'; last.bx = bx; last.by = by; }
     }
