@@ -33,6 +33,7 @@
 </div>
 
 <canvas id="fx" class="fx" aria-hidden="true"></canvas>
+<canvas id="shock" class="shock" aria-hidden="true"></canvas>
 <div class="grain" aria-hidden="true"></div>
 <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
 
@@ -90,7 +91,42 @@
     <canvas id="robotCanvas" class="robot__canvas" aria-hidden="true"></canvas>
     <img class="robot__poster" src="assets/img/robot-poster.webp" alt="" width="900" height="1000" fetchpriority="high">
     <p class="robot__bubble" id="robotBubble" aria-live="polite"></p>
-    <div class="robot__hud robot__hud--a" aria-hidden="true"><span>AI core</span><b><i class="dot dot--live"></i>Online</b></div>
+    <div class="holo" aria-hidden="true">
+      <div class="holo__head"><i class="dot dot--live"></i><span class="holo__kicker">AI core</span><b class="holo__label">Online</b></div>
+      <div class="holo__view">
+        <div class="holo__screen hs-app" data-v="0">
+          <div class="hs-phone">
+            <span class="hs hs-notch" style="--n:0"></span>
+            <span class="hs hs-title" style="--n:1"></span>
+            <span class="hs hs-hero" style="--n:2"></span>
+            <span class="hs hs-row" style="--n:3"></span>
+            <span class="hs hs-row" style="--n:4"></span>
+            <span class="hs hs-tab" style="--n:5"></span>
+          </div>
+        </div>
+        <div class="holo__screen hs-web" data-v="1">
+          <div class="hs hs-chrome" style="--n:0"><b></b><b></b><b></b><span></span></div>
+          <div class="hs-web__hero">
+            <div class="hs-web__copy"><span class="hs hs-line hs-line--lg" style="--n:1"></span><span class="hs hs-line" style="--n:2"></span><span class="hs hs-btn" style="--n:3"></span></div>
+            <span class="hs hs-img" style="--n:2"></span>
+          </div>
+          <div class="hs-web__cards"><span class="hs" style="--n:4"></span><span class="hs" style="--n:5"></span><span class="hs" style="--n:6"></span></div>
+        </div>
+        <div class="holo__screen hs-vid" data-v="2">
+          <div class="hs hs-player" style="--n:0"><i class="hs-play"></i></div>
+          <div class="hs hs-track" style="--n:1"><span></span></div>
+          <div class="hs-times"><span class="hs" style="--n:2"></span><span class="hs" style="--n:2"></span></div>
+        </div>
+        <div class="holo__screen hs-brand" data-v="3">
+          <div class="hs-chart"><span class="hs" style="--n:0;--h:34%"></span><span class="hs" style="--n:1;--h:52%"></span><span class="hs" style="--n:2;--h:72%"></span><span class="hs" style="--n:3;--h:94%"></span></div>
+          <div class="hs hs-axis" style="--n:4"></div>
+          <div class="hs-legend"><span class="hs" style="--n:5"></span><span class="hs" style="--n:5"></span></div>
+        </div>
+        <div class="holo__think"><span></span><span></span><span></span></div>
+        <div class="holo__toast">Shipped ✓</div>
+      </div>
+      <div class="holo__bar"><span></span></div>
+    </div>
     <div class="robot__hud robot__hud--b" aria-hidden="true"><span>Daily stack</span><b class="robot__logos"><img class="lg" src="assets/logos/claude.svg" alt=""><i class="lg lg--mono lg--openai"></i><img class="lg" src="assets/logos/antigravity.svg" alt=""><i class="lg lg--mono lg--ollama"></i></b></div>
     <p class="robot__hint" aria-hidden="true"><span class="robot__hint-fine">Click</span><span class="robot__hint-touch">Tap</span> the robot to say hi</p>
     <button class="robot__say" type="button">Say hello to the robot</button>
@@ -381,6 +417,7 @@
         <ul id="caseFeatures"></ul>
       </div>
     </div>
+    <div class="case__shots" id="caseShots"></div>
     <div class="case__nav">
       <button type="button" class="btn btn--sm" id="casePrev"><span>← Previous</span></button>
       <p id="caseCount" aria-live="polite"></p>
